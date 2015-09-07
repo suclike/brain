@@ -1,3 +1,6 @@
+Description
+=======
+
 From the http://google.github.io/dagger/
 
 The best classes in any application are the ones that do stuff: 
@@ -13,12 +16,12 @@ Dagger is a replacement for these `FactoryFactory` classes that implements the d
 
 By building on standard `javax.inject` annotations (JSR 330), each class is easy to test. You don't need a bunch of boilerplate just to swap the RpcCreditCardService out for a FakeCreditCardService.
 
-== @Component ==
+@Component
+=======
 
-To get started in a dagger project, start with the @Component which glues everything together
+To get started in a dagger project, start with the `@Component` which glues everything together
 
-```
-
+```java
 @Component    // this is the interface between class that use injected type and class that produce them
 ( modules = { 
         // those are the class that knows how to @Provides types
@@ -40,13 +43,14 @@ public interface ApplicationComponent {
 }
 ```
 
-== Create the component and make it accessible ==
+Create the component and make it accessible
+=======
 
-dagger provides for you a generated builder **DaggerApplicationComponent.builder()**
+dagger provides for you a generated builder `DaggerApplicationComponent.builder()`
 that you make accessible so that you can call the `injectIntoXXXX(Type type)` methods
 
 
-```
+```java
 public class SmfApplication extends Application {
     
     
@@ -75,14 +79,15 @@ public class SmfApplication extends Application {
 ```    
 
     
-== Use your @Inject-ed fields ==
+Declare @Inject-ed fields, inject and use
+=======
     
 Say we want to use https://github.com/facebook/stetho to check quickly with `$ dumpapp network`
 from the command-line wether our rest services are working as expected.
-Since `BackendService` and friends are accessible from the ApplicationComponent,
-we rely on dependancy injection to having them @Provides-ed to us.
+Since `BackendService` and friends are accessible from the `ApplicationComponent`,
+we rely on dependancy injection to having them `@Provides`-ed to us.
     
-```
+```java
 public static class NetworkPlugin implements DumperPlugin {
     // declare the types you need
     @Inject protected BackendService backendService;
@@ -110,12 +115,13 @@ public static class NetworkPlugin implements DumperPlugin {
 }             
 ```    
 
-== @Module : the class that knows how to @Provides types ==
+`@Module` : the class that knows how to @Provides types
+=======
 
-This is the class that replaces the FactoryFactory classes.
-This method for example provides the BackendService type.
+This is the class that replaces the `FactoryFactory` classes.
+This method for example provides the `BackendService` type.
 
-```
+```java
 @Module
 public class ApiModule {
 
@@ -137,7 +143,7 @@ public class ApiModule {
     }
 ```    
 
-The class is annotated with @Module.
+The class is annotated with `@Module`.
 Each method that provides a type follow the convention
 
     @Provides  Type providesType(TypeNeeded typeNeeded) { .... }
@@ -146,9 +152,9 @@ This makes navigation easy. Want to know how `Gson` objects are provided?
 Open symbol (Alt-Cmd-O) **providesGson()**
 
 As you can see in the example, if you need other types to create you type,
-you can just declare them as parameters and @Provides them with another function
+you can just declare them as parameters and `@Provides` them with another function
       
-```
+```java
 
     @Provides RequestInterceptor providesRequestInterceptor(final User user) {
         return new RequestInterceptor() {
@@ -172,6 +178,7 @@ you can just declare them as parameters and @Provides them with another function
     // which in turn depends on
     @Provides OkHttpClient okHttpClient() {
         OkHttpClient okHttpClient = new OkHttpClient();
+        // allow to see networks request in Chrome Developer Tools \o/
         okHttpClient.networkInterceptors().add(new StethoInterceptor());
         return okHttpClient;
     }
@@ -179,9 +186,13 @@ you can just declare them as parameters and @Provides them with another function
 ```       
       
 
-== Links ==
+Links
+=========
 
 http://google.github.io/dagger/
 http://fernandocejas.com/2015/04/11/tasting-dagger-2-on-android/
 https://guides.codepath.com/android/Dependency-Injection-with-Dagger-2
+
+about stetho
+http://code.tutsplus.com/tutorials/debugging-android-apps-with-facebooks-stetho--cms-24205
 

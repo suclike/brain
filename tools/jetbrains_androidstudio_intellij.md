@@ -1,5 +1,5 @@
 
-
+      IntelliJ
 
 Hadi Hairi's presentation
 ========
@@ -17,7 +17,7 @@ Hadi Hairi's presentation
 - HTML has lot of htmls and live templates
 - HTML support emmet WOOOOW http://emmet.io/
 - Quick switch scheme
-- Structured Search  
+- Structured Search : https://www.jetbrains.com/idea/help/structural-search-and-replace-examples.html
  
 
 

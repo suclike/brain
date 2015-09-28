@@ -45,18 +45,6 @@
  }
 
  ******/
-/** Example top-level build.gradle
- apply from: 'dependencies.gradle'
- buildscript {
-     repositories {
-        jcenter()
-     }
-     dependencies {
-        classpath buildscriptoptions.android
-        classpath buildscriptoptions.apt
-     }
- }
- ****/
 
 
 ext {

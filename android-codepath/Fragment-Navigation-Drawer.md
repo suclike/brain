@@ -13,6 +13,14 @@ This guide explains how to setup a basic material design style drawer filled wit
 
 Make sure to setup the Google [[Design Support Library]] before using Google's new [NavigationView](https://developer.android.com/reference/android/support/design/widget/NavigationView.html), announced as part of the Android M release.  The NavigationView should be backwards compatible with all versions down to Android 2.1.
 
+Make sure you have this Gradle dependency added to your `app/build.gradle` file:
+
+```gradle
+dependencies {
+  compile 'com.android.support:design:23.1.1'
+}
+```
+
 ### Download Nav Drawer Item icons
 
 Download the following icons and add them to your drawable folders by copying and pasting them into the drawable folder or using the `New Image Asset` dialog to create versions for each density.  
@@ -24,10 +32,6 @@ Download the following icons and add them to your drawable folders by copying an
 If you use the `New Image Asset` dialog, choose a black foreground color and change the resource name.
 
 <img src="https://i.imgur.com/DE49F1R.png" width="600"/>
-
-Download the menu icon from Google's official [Material Design icon set](https://github.com/google/material-design-icons) and use `New Image Asset` to create versions of each density too.  Save this file as `ic_menu.png`.
-
-* [ic_menu_white_36dp.png](https://github.com/google/material-design-icons/blob/master/navigation/drawable-xxxhdpi/ic_menu_white_36dp.png)
 
 ### Setup Drawer Resources
 
@@ -78,7 +82,7 @@ Next, you need to define your fragments that will be displayed within the drawer
 
 ### Setup Toolbar
 
-In order to slide our navigation drawer over the ActionBar, we need to use the new [Toolbar](http://guides.codepath.com/android/Defining-The-ActionBar#toolbar-basics) widget as defined in the AppCompat v21 library. The `Toolbar` can be embedded into your view hierarchy which makes sure that the drawer slides over the `ActionBar`.
+In order to slide our navigation drawer over the ActionBar, we need to use the new [[Toolbar|Using-the-App-ToolBar]] widget as defined in the AppCompat v21 library. The `Toolbar` can be embedded into your view hierarchy which makes sure that the drawer slides over the `ActionBar`.
 
 Create a new layout file `res/layout/toolbar.xml` with the following code:
 
@@ -124,32 +128,35 @@ Also note that normally you should decide on your color scheme by going to [Mate
 Next, let's setup a basic navigation drawer based on the following layout file which has the entire drawer setup in `res/layout/activity_main.xml`. Note that the `Toolbar` is added as the first child of the main content view by adding the include tag.
 
 ```xml
+<!-- This DrawerLayout has two children at the root  -->
 <android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
+    
+    <!-- This LinearLayout represents the contents of the screen  -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- The ActionBar -->
+        <!-- The ActionBar displayed at the top -->
         <include
             layout="@layout/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <!-- The main content view -->
+        <!-- The main content view where fragments are loaded -->
         <FrameLayout
             android:id="@+id/flContent"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>
 
-    <!-- The navigation drawer -->
+    <!-- The navigation drawer that comes from the left -->
+    <!-- Note that `android:layout_gravity` needs to be set to 'start' -->
     <android.support.design.widget.NavigationView
         android:id="@+id/nvView"
         android:layout_width="wrap_content"
@@ -159,66 +166,62 @@ Next, let's setup a basic navigation drawer based on the following layout file w
         app:menu="@menu/drawer_view" />
 </android.support.v4.widget.DrawerLayout>
 ```
-Add Gradle dependency support, and sync
-```
-compile 'com.android.support:design:22.2.0'
-```
 
 Now, let's setup the drawer in our activity.  We can also setup the menu icon too.
 
+Note: Make sure you implement the correct `onPostCreate(Bundle savedInstanceState)` method. There are 2 signatures and only this one shows the hamburger icon.
+
 ```java
 public class MainActivity extends AppCompatActivity {
-	private DrawerLayout mDrawer;
-	private Toolbar toolbar;
+    private DrawerLayout mDrawer;
+    private Toolbar toolbar;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-		// Set a Toolbar to replace the ActionBar.
-		toolbar = (Toolbar) findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
+        // Set a Toolbar to replace the ActionBar.
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-		// Find our drawer view
-		mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        // Find our drawer view
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    }
 
-		// Set the menu icon instead of the launcher icon.
-		final ActionBar ab = getSupportActionBar();
-		ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-	 	ab.setDisplayHomeAsUpEnabled(true);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // The action bar home/up action should open or close the drawer.
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawer.openDrawer(GravityCompat.START);
+                return true;
+            }
 
+            return super.onOptionsItemSelected(item);
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// The action bar home/up action should open or close the drawer.
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				mDrawer.openDrawer(GravityCompat.START);
-				return true;
-		}
-
-		return super.onOptionsItemSelected(item);
-	}
-
+        // Make sure this is the method with just `Bundle` as the signature
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
+            super.onPostCreate(savedInstanceState);
 	}
 }
 ```
 
 ### Navigating between Menu Items
 
-Setup a handler to respond to click events on the navigation elements and swap out the fragment.
+Setup a handler to respond to click events on the navigation elements and swap out the fragment. This can be put into the activity directly:
 
 ```java
+public class MainActivity extends AppCompatActivity {
+   
+    // ...
 
-@Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-         // Find our drawer view
+        // ...From section above...
+        // Find our drawer view
         nvDrawer = (NavigationView) findViewById(R.id.nvView);
         // Setup drawer view
         setupDrawerContent(nvDrawer);
@@ -262,7 +265,7 @@ Setup a handler to respond to click events on the navigation elements and swap o
         }
 
         // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
 
         // Highlight the selected item, update the title, and close the drawer
@@ -270,6 +273,9 @@ Setup a handler to respond to click events on the navigation elements and swap o
         setTitle(menuItem.getTitle());
         mDrawer.closeDrawers();
     }
+
+    // ...
+}
 ```
 
 ### Add Navigation Header
@@ -298,17 +304,42 @@ The NavigationView also accepts a custom attribute that can reference a layout t
 </LinearLayout>
 ```
 
-You would then reference this layout in your `NavigationView` with the `app:headerLayout` custom attribute:
+You would then reference this in the layout `res/layout/activity_main.xml` in the `NavigationView` with the `app:headerLayout` custom attribute:
 
 ```xml
+<!-- res/layout/activity_main.xml -->
 
  <!-- The navigation drawer -->
     <android.support.design.widget.NavigationView
-
+        ...
         app:headerLayout="@layout/nav_header">
 
     </android.support.design.widget.NavigationView>
 ```
+
+This `app:headerLayout` inflates the specified layout into the header automatically. This can alternatively be done at runtime with:
+
+```java
+// Lookup navigation view
+NavigationView navigationView = (NavigationView) findViewById(R.id.nav_draw);
+// Inflate the header view at runtime
+View headerLayout = navigationView.inflateHeaderView(R.layout.nav_header);
+// We can now look up items within the header if needed
+ImageView ivHeaderPhoto = headerLayout.findViewById(R.id.imageView);
+```
+
+### Getting references to the header
+
+**Note:** Version `23.1.0` of the design support library switches `NavigationView` to using a `RecyclerView` and causes NPE (null exceptions) on header lookups unless the header is added at runtime. 
+If you need to get a reference to the header, you need to use the new `getHeaderView()` method introduced in the latest `v23.1.1` update:
+
+```java
+// There is usually only 1 header view.  
+// Multiple header views can technically be added at runtime.
+// We can use navigationView.getHeaderCount() to determine the total number.
+View headerLayout = navigationView.getHeaderView(0);
+```
+
 
 ## Animate the Hamburger Icon
 
@@ -379,8 +410,8 @@ We also need to change the `onOptionsItemSelected()` method and allow the Action
 
 The ActionBarToggle will perform the same function done previously but adds a bit more checks and allows mouse clicks on the icon to open and close the drawer.  See the [source code](https://github.com/android/platform_frameworks_support/blob/master/v7/appcompat/src/android/support/v7/app/ActionBarDrawerToggle.java#L285-291) for more context.
 
-One thing to note is that you no longer need to the `ic_menu.png` and the setHomeAsUpIndicator() call to set the menu.  The ActionBarDrawerToggle renders a custom [DrawerArrowDrawable](
-https://github.com/android/platform_frameworks_support/blob/master/v7/appcompat/src/android/support/v7/app/DrawerArrowDrawable.java) for you.
+One thing to note is that the ActionBarDrawerToggle renders a custom [DrawerArrowDrawable](
+https://github.com/android/platform_frameworks_support/blob/master/v7/appcompat/src/android/support/v7/graphics/drawable/DrawerArrowDrawable.java) for you for the hamburger icon.
 
 ## Making Status Bar Translucent
 
@@ -401,6 +432,80 @@ In `res/values-v19/styles.xml` we can add the following:
 ```
 
 Now if you run your app, you should see the navigation drawer and be able to select between your fragments.
+
+## Adding custom views to navigation drawer
+
+One improvement made to the design support library 23.1.0 is the addition of support for custom views for the navigation drawer items.  For instance, we can create a custom switch like the navigation drawer from Google Play Movies for one of the rows:
+
+<img src="http://i.imgur.com/gCgB5PQ.png"/>
+ 
+The approach is the same as adding [[ActionView items|Extended-ActionBar-Guide#adding-actionview-items]] to the ActionBar.  We simply need to define a separate layout such as the following snippet.  We will call this file `action_view_switch.xml`:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.SwitchCompat
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:text="Switch"/>
+</LinearLayout>
+```
+
+We then reference this layout using the `app:actionLayout` attribute.  A title must be provided
+but can also be set to blank:
+
+```xml
+<menu xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:id="@+id/nav_switch"
+        app:actionLayout="@layout/action_view_switch"
+        android:title="Downloaded only" />
+  </item>
+</menu>
+```
+
+You can attach events directly in XML so long as your Activity will implement the method.  To add an event handling to the toggle switch programmatically through Java, you will need to first get the menu instance and get access to the corresponding ActionView:
+
+```java
+Menu menu = navigationView.getMenu();
+MenuItem menuItem = menu.findItem(R.id.nav_switch);
+View actionView = MenuItemCompat.getActionView(menuItem);
+actionView.setOnClickListener(new View.OnClickListener() {
+  @Override
+  public void onClick(View v) {
+                
+  }
+});
+```
+
+Custom widgets using `app:actionViewClass` can also be used too for menu items as well now too.  For more details about how Action Views, see adding the [[SearchView to ActionBar|Extended-ActionBar-Guide#adding-searchview-to-actionbar]] guide. 
+
+## Persistent Navigation Drawer
+
+In certain situations, especially on tablets, the navigation drawer should be a permanent fixture on the activity acting as a sidebar:
+
+![Persistent](http://i.imgur.com/9f7nyrA.png)
+
+To achieve this effect, review the following links which describe one approach:
+
+ * [Static Nav Drawer](http://derekrwoods.com/2013/09/creating-a-static-navigation-drawer-in-android/)
+ * [Related Stackoverflow Question](http://stackoverflow.com/a/18095111)
+ * [Sample Code](https://github.com/samerzmd/Navigation-Drawer-set-as-always-opened-on-tablets)
+
+Third-party libraries may also make this easier to achieve.
+
+## Third-Party Libraries
+
+There are a few third-party libraries that are still relevant as possible alternatives to using the `DrawerLayout` directly which provide certain material design elements automatically:
+
+<img src="http://i.imgur.com/6WHIEX5.jpg" width="500" />
+
+ * [MaterialDrawer](https://github.com/mikepenz/MaterialDrawer)
+ * [NavigationDrawerMaterial](https://github.com/rudsonlive/NavigationDrawer-MaterialDesign)
+
+Often these are unnecessary but check them out to see the functionality they provide.
 
 ## Limitations
 

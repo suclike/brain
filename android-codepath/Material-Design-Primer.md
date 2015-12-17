@@ -88,7 +88,7 @@ Take a look at the [Material Design Checklist](http://android-developers.blogspo
 
 <img src="https://i.imgur.com/hPOFJUf.gif" width="250" alt="drawer" />
 
-Check out our [[Material Navigation Drawer|Fragment-Navigation-Drawer#usage]] guide for a step-by-step tutorial for setting up the updated material navigation drawer behavior. Note that to do this properly, you'll need to [[replace your ActionBar with a Toolbar|Defining-The-ActionBar#using-toolbar-as-actionbar]].
+Check out our [[Material Navigation Drawer|Fragment-Navigation-Drawer#usage]] guide for a step-by-step tutorial for setting up the updated material navigation drawer behavior. Note that to do this properly, you'll need to [[replace your ActionBar with a Toolbar|Using-the-App-ToolBar#using-toolbar-as-actionbar]].
 
 ## Material Views
 
@@ -110,7 +110,7 @@ Android 5.0 introduces a [[new widget called CardView|Using-the-CardView]] which
 
 ### Toolbar
 
-With our material themes, there is now a spiritual successor to the `ActionBar` called the [[Toolbar|Defining-The-ActionBar#toolbar-basics]]. 
+With our material themes, there is now a spiritual successor to the `ActionBar` called the [[Toolbar|Using-the-App-ToolBar]]. 
 
 ![Toolbar](https://i.imgur.com/dGzDoDSm.png)
 
@@ -120,8 +120,8 @@ The toolbar operates as a replacement for the original `ActionBar` but is added 
 
 [[Floating action buttons|Floating-Action-Buttons]] (or FAB) are a special "promoted action" within an activity or fragment that is moved from the `ActionBar` to a round icon floating above the UI in the bottom right corner.
 
-<img src="https://github.com/makovkastar/FloatingActionButton/raw/master/art/demo.gif" width="185" alt="FAB1" />&nbsp;
-<img src="https://i.imgur.com/SBbLXo2.png" width="200" alt="FAB2" />
+<img src="http://i.imgur.com/BE7c4xy.gif" height="350" alt="FAB1" />&nbsp;
+<img src="http://i.imgur.com/qij0f3K.gif" height="350" alt="FAB2" />
 
 The floating action button should represent **the primary action** within a screen. More info and use cases of the FAB button can be found in Google’s official [design specs found here](http://www.google.com/design/spec/components/buttons.html#buttons-floating-action-button).
 
@@ -157,8 +157,7 @@ This animation is often times used in conjunction with a floating action button 
 
 [[Scroll effects|Handling-Scrolls-with-CoordinatorLayout]] can also be created to shrink or expand the Toolbar or Header to make room for the main content area as a user scrolls.
 
-![scroll-effects](http://imgur.com/ah4l5oj.gif)
-
+<img src="http://imgur.com/ah4l5oj.gif" alt="scrolling effects" width="300" />
 
 ## Material Styles
 

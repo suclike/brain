@@ -36,6 +36,10 @@ public void onRestoreInstanceState(Bundle savedInstanceState) {
 }
 ```
 
+Instance state can also be restored in the standard `Activity#onCreate` method but but it is convenient to do it in `onRestoreInstanceState` which ensures all of the initialization has been done and allows subclasses to decide whether to use the default implementation. Read [this stackoverflow post](http://stackoverflow.com/a/14676555/313399) for details.
+
+Note that `onSaveInstanceState` and `onRestoreInstanceState` are not guaranteed to be called together. Android invokes `onSaveInstanceState()` when there's a chance the activity might be destroyed. However, there are cases where `onSaveInstanceState` is called but the activity is not destroyed and as a result `onRestoreInstanceState` is not invoked.
+
 Read more on the [Recreating an Activity](http://developer.android.com/training/basics/activity-lifecycle/recreating.html) guide.
 
 ## Saving and Restoring Fragment State
@@ -78,7 +82,7 @@ public class MySimpleFragment extends Fragment {
 For the fragment state to be saved properly, we need to be sure that we aren't **unnecessarily recreating the fragment** on configuration changes. This means being careful not to reinitialize existing fragments when they already exist. Any fragments being initialized in an Activity need to be **looked up by tag** after a configuration change:
 
 ```java
-public class  ParentActivity extends FragmentActivity {
+public class ParentActivity extends AppCompatActivity {
     private MySimpleFragment fragmentSimple;
     private final String SIMPLE_FRAGMENT_TAG = "myfragmenttag";
 
@@ -98,7 +102,7 @@ public class  ParentActivity extends FragmentActivity {
 This requires us to be careful to **include a tag for lookup** whenever putting a fragment into the activity within a transaction:
 
 ```java
-public class  ParentActivity extends FragmentActivity {
+public class ParentActivity extends AppCompatActivity {
     private MySimpleFragment fragmentSimple;
     private final String SIMPLE_FRAGMENT_TAG = "myfragmenttag";
 

@@ -58,7 +58,7 @@ Streams usually require the following components:
  * Creating a list of items based on that source data including displaying text and media
    * See: [[listview|Using an ArrayAdapter with ListView]]
  * Endless scrolling which paginates as user consumes content
-   * See: [[endless scrolling|Endless-Scrolling-with-AdapterViews]]
+   * See: [[endless scrolling|Endless-Scrolling-with-AdapterViews-and-RecyclerView]]
  * Handling cases where the user wants to view more information on a piece of content
    * See: [[events|Basic-Event-Listeners]]
  * Allowing the user to take primary actions on this content such as deleting or editing 
@@ -110,7 +110,7 @@ Creation screens usually require the following tasks:
 * Option to capture a photo or select from photo gallery 
   * See: [[camera and media|Accessing the Camera and Stored Media]]
 * Option to capture current location of device 
-  * See: [[location|Listening to Sensors and Location]]
+  * See: [[location|Retrieving Location with LocationServices API]]
 * Option to share or include friends related to the item 
   * See: [[parse sdk|Building Data driven Apps with Parse]]
 

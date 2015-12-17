@@ -23,12 +23,14 @@ First, setup permissions in the manifest:
 <uses-permission android:name="android.permission.READ_CONTACTS"/>
 ```
 
+**Note:** The permissions model has changed starting in Marshmallow. If your `targetSdkVersion` >= `23` and you are running on a Marshmallow (or later) device / emulator, you'll need to follow this guide on implementing [[runtime permissions|Understanding-App-Permissions#runtime-permissions]] in order to get the `READ_CONTACTS` permission.
+
 ### Constructing the SimpleCursorAdapter
 
 The [SimpleCursorAdapter](http://developer.android.com/reference/android/widget/SimpleCursorAdapter.html) is an adapter that binds a `ListView` to a `Cursor` dataset displaying the result set as rows in the list. We can create the adapter before receiving the cursor by constructing as follows:
 
 ```java
-public class SampleActivity extends FragmentActivity {
+public class SampleActivity extends AppCompatActivity {
     // ... existing code ...
     private SimpleCursorAdapter adapter;
 
@@ -62,7 +64,7 @@ Note that if you want to use a more complex custom layout, you should construct 
 Once we've defined our cursor adapter, we can add a `ListView` to our activity called `R.id.lvContacts` which will contain the list of contacts loaded from the content provider. Once we've **defined the ListView in our layout XML**, we can bind the list to our adapter:
 
 ```java
-public class SampleActivity extends FragmentActivity {
+public class SampleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
        // ...
@@ -84,7 +86,7 @@ To execute the request to our contacts provider, we need to define the callbacks
 
 
 ```java
-public class SampleActivity extends FragmentActivity {
+public class SampleActivity extends AppCompatActivity {
    // ... existing code
 
     // Defines the asynchronous callback for the contacts data loader
@@ -94,13 +96,13 @@ public class SampleActivity extends FragmentActivity {
     	@Override
     	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
     		// Define the columns to retrieve
-    		String[] projectionFields =  new String[] { ContactsContract.Contacts._ID, 
+    		String[] projectionFields = new String[] { ContactsContract.Contacts._ID, 
     	               ContactsContract.Contacts.DISPLAY_NAME, 
                        ContactsContract.Contacts.PHOTO_URI };
     		// Construct the loader
     		CursorLoader cursorLoader = new CursorLoader(SampleActivity.this,
     				ContactsContract.Contacts.CONTENT_URI, // URI
-    				projectionFields,  // projection fields
+    				projectionFields, // projection fields
     				null, // the selection criteria
     				null, // the selection args
     				null // the sort order
@@ -132,7 +134,7 @@ public class SampleActivity extends FragmentActivity {
 Now when a result comes back to the callback defined, the adapter will be bound to the cursor. With the loader callbacks specified, we can now setup our loader and execute the asynchronous request to the content provider:
 
 ```java
-public class SampleActivity extends FragmentActivity {
+public class SampleActivity extends AppCompatActivity {
     // ... existing code
     // Defines the id of the loader for later reference
     public static final int CONTACT_LOADER_ID = 78; // From docs: A unique identifier for this loader. Can be whatever you want.

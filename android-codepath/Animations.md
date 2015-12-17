@@ -42,24 +42,22 @@ Common properties commonly animated on views include:
 | Property                                                         | Description          | 
 |--------------------------------------------------------------    | ------------         |
 | `alpha`                                                          | Fade in or out       |
-| `rotation`, `rotationX`, `rotationY`                             | Spinning             |
+| `rotation`, `rotationX`, `rotationY`                             | Spin or flip         |
 | `scaleX`, `scaleY`                                               | Grow or shrink       |
 | `x`, `y`, `z`                                                    | Position             |
 | `translationX`, `translationY`, **`translationZ` (API 21+)**     | Offset from Position |
 
-To use animations in a way that is **compatible with pre-3.0 Android versions**, we must use the [NineOldAndroids](http://nineoldandroids.com/) for all our property animations. 
-
-If you are an Android Studio user, add the following dependency to your `app/build.gradle` file:
+In the past, the way to use animations **compatible with pre-3.0 Android versions** is to use  [NineOldAndroids](http://nineoldandroids.com/) for all our property animations.  Nine Old Androids has now been deprecated and no longer being supported but can still be used by adding this line to your `app/build.gradle` file:
 
 ```gradle
-compile 'com.nineoldandroids:library:2.4.0+'
+compile 'com.nineoldandroids:library:2.4.0'
 ```
 
-One library that simplifies common animations is called [AndroidViewAnimations](https://github.com/daimajia/AndroidViewAnimations) and makes certain common animations on views much easier to achieve. This library is definitely worth a look.
+A library that simplifies common animations is called [AndroidViewAnimations](https://github.com/daimajia/AndroidViewAnimations) and makes certain common animations on views much easier to achieve. This library is definitely worth a look.
 
 ### Using ObjectAnimator in Java
 
-Once we have setup NineOldAndroids, we can use the [ObjectAnimator](http://developer.android.com/reference/android/animation/ObjectAnimator.html) method to execute simple animations for a particular property on a specified object:
+We can use the [ObjectAnimator](http://developer.android.com/reference/android/animation/ObjectAnimator.html) method to execute simple animations for a particular property on a specified object:
 
 ```java
 ObjectAnimator fadeAnim = ObjectAnimator.ofFloat(tvLabel, "alpha", 0.2f);
@@ -191,42 +189,25 @@ animatorSet.play(bouncer).before(fadeAnim);
 animatorSet.start();
 ``` 
 
-See the [Property Animation](http://developer.android.com/guide/topics/graphics/prop-animation.html) official docs for more detailed information in addition to the [NineOldAndroids](http://nineoldandroids.com/) website.
+See the [Property Animation](http://developer.android.com/guide/topics/graphics/prop-animation.html) official docs for more detailed information.
 
 ### Using ViewPropertyAnimator in Java
 
 We can also do property animations in an even simpler way using the `ViewPropertyAnimator` system which is built on top of the `ObjectAnimator`.  It also enables faster performance as described in this [blog post](http://android-developers.blogspot.com/2011/05/introducing-viewpropertyanimator.html) and provides a convenient way of doing animations.
 
-Without NineOldAndroids and therefore incompatible with Android versions of 3.0 or below we can run concurrent animations with:
+#### Without Support Library
+
+If we do not need the rely on the `ViewCompat#animate` support v4 library and only need to support Android v3.0 devices and above, we can invoke `animate()` directly on any view with:
 
 ```java
 Button btnExample = (Button) findViewById(R.id.btnExample);
 btnExample.animate().alpha(0.2f).xBy(-100).yBy(100);
 ```
 
-For any activity that uses [NineOldAndroids](https://github.com/JakeWharton/NineOldAndroids), be sure to include a static import to the ViewPropertyAnimator, as shown below:
+The `animate` method has many properties that mirror the methods from the [ViewPropertyAnimator](http://developer.android.com/reference/android/view/ViewPropertyAnimator.html) class including changing many possible properties such as opacity, rotation, scale, x&y positions, and more. Here's a more complex animation being executed:
 
 ```java
-import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
-```
-
-Now we can execute property animations on our views. For example, suppose we want to fade out a button on screen. All we need to do is pass the button view into the `animate` method and then invoke the `alpha` property:
-
-```java
-Button btnExample = (Button) findViewById(R.id.btnExample);
-//  Note: in order to use the ViewPropertyAnimator like this add the following import:
-//  import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
-animate(btnExample).alpha(0);
-```
-
-This will automatically create and execute the animation to fade out the button: 
-
-![Simple Fadeout](https://i.imgur.com/dsyRMsl.gif)
-
-The animate method has many properties that mirror the methods from the [ViewPropertyAnimator](http://developer.android.com/reference/android/view/ViewPropertyAnimator.html) class including changing many possible properties such as opacity, rotation, scale, x&y positions, and more. For example, here's a more complex animation being executed:
-
-```java
-animate(btnExample).alpha(0.5f).rotation(90f).
+btnExample.animate().alpha(0.5f).rotation(90f).
   scaleX(2).xBy(100).yBy(100).setDuration(1000).setStartDelay(10).
   setListener(new AnimatorListenerAdapter() {
       @Override
@@ -236,11 +217,47 @@ animate(btnExample).alpha(0.5f).rotation(90f).
   });
 ```
 
-This applies multiple property animations at once including opacity change, rotation, scale and modifying the position of the button. Here we also can modify the duration, introduce a start delay and even execute a listener at the beginning or end of the animation. 
+This applies multiple property animations in parallel including opacity change, rotation, scale and modifying the position of the button. Here we also can modify the duration, introduce a start delay and even setup a listener at the beginning or end of the animation.
+
+#### Using the Support Library
+
+If we want to be able to compile the code to run on pre-ICS devices, we can leverage the support library's `ViewCompat.animate` static method instead. If you are an Android Studio user, first add the following dependency to your `app/build.gradle` file:
+
+```gradle
+compile 'com.android.support:support-v4:23.1.0'
+```
+
+We can now run concurrent animations with the following:
+
+```java
+Button btnExample = (Button) findViewById(R.id.btnExample);
+ViewCompat.animate(btnExample).alpha(0.2f).xBy(-100).yBy(100);
+```
+
+The support v4 library is used to enable devices back to API 11 to execute the code.  However, the animations are simply ignored on pre Android v4.0.3 devices according to this [finding](https://twitter.com/jakewharton/status/486346048755884034). To have the animations run, we need to use NineOldAndroids.
+
+#### NineOldAndroids
+
+If we wish to use the `ViewPropertyAnimator` and have animations run on Android pre-v3.0 devices using the now deprecated NineOldAndroids project, this import statement should be used:
+
+```java
+import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
+```
+
+If we want to fade out a button on screen, we can pass the button view into the `animate()` static function and then invoke the `alpha` method:
+
+```java
+Button btnExample = (Button) findViewById(R.id.btnExample);
+animate(btnExample).alpha(0);
+```
+
+This will automatically create and execute the animation to fade out the button: 
+
+![Simple Fadeout](https://i.imgur.com/dsyRMsl.gif)
 
 ### Using XML
 
-We can also use NineOldAndroids to load property animations from XML. All we have to do is create an XML file that describes the object property animation we want to run. For example, if we wanted to animate a fade out for a button, we could add this file to `res/animator/fade_out.xml`:
+We can also use property animations from XML. All we have to do is create an XML file that describes the object property animation we want to run. For example, if we wanted to animate a fade out for a button, we could add this file to `res/animator/fade_out.xml`:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -365,8 +382,8 @@ For example, a value animation XML file might look like this for fading in an ob
     android:fillAfter="true" >
     <alpha
         android:duration="1000"
-        android:fromAlpha="1.0"
         android:interpolator="@android:anim/accelerate_interpolator"
+        android:fromAlpha="1.0"
         android:toAlpha="0.0" />
 </set>
 ```
@@ -508,14 +525,37 @@ This results in the following:
 
 ![Activity Transition](https://i.imgur.com/lRU3wrn.gif)
 
+#### Browsing Transition Samples
+
 You can see several complete examples of activity transitions in the following resources:
 
- * [Card Flip Animation](http://developer.android.com/training/animation/cardflip.html)
+ * [Card Flip Animation](http://stackoverflow.com/a/19959933/313399)
  * [Vine Activity Transition](http://blog.quent.in/index.php/2013/06/activity-transition-animations-like-the-vine-android-application/)
  * [Sliding In From Left Animation](http://android-er.blogspot.com/2013/04/custom-animation-while-switching.html)
  * [Sliding Drawer Animation](http://blog.blundell-apps.com/animate-an-activity/)
 
 Check out these above to get a deeper understanding of how to create custom and unique transitions. In **Android 5.0 and above** the ability for activities to "share elements" was introduced allowing an element in on activity to morph into an element within the child activity. Check out our [[Shared Element Activity Transition]] guide for more details.
+
+#### Modifying the Default Transitions
+
+The default entrance and exit animations for activities can be customized as part of a theme by modifying `res/styles.xml` with a custom `Animation.Activity` style as shown below:
+
+```xml
+<!-- Customize `android:windowAnimationStyle` for theme -->
+<style name="AppTheme" parent="AppBaseTheme">
+    <!-- ... -->
+    <item name="android:windowAnimationStyle">@style/CustomAnimation.Activity</item>
+</style>
+
+<style name="CustomAnimation.Activity" parent="@android:style/Animation.Activity"> 
+    <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
+    <item name="android:activityOpenExitAnimation">@anim/slide_out_left</item>
+    <item name="android:activityCloseEnterAnimation">@android:anim/slide_in_left</item>
+    <item name="android:activityCloseExitAnimation">@android:anim/slide_out_right</item>
+</style>
+```
+
+Refer to this [stackoverflow post](http://stackoverflow.com/a/5018385) for more details. 
 
 ### Fragment Transitions
 
@@ -571,7 +611,7 @@ fts.replace(R.id.fragment_container, newFragment, "fragment");
 fts.commit();
 ```
 
-Read more about Fragment Transitions in this [detailed article](http://android-er.blogspot.com/2013/04/implement-animation-in.html). You can even [check out the source code](http://grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/4.4_r1/frameworks/base/core/res/res/anim/slide_in_right.xml?av=f) of those animations. For a step-by-step example on how to implement a "flip" animation, check out the official [Fragment Flip Tutorial](http://developer.android.com/training/animation/cardflip.html). 
+Read more about Fragment Transitions in this [detailed article](http://android-er.blogspot.com/2013/04/implement-animation-in.html). You can even [check out the source code](http://grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/4.4_r1/frameworks/base/core/res/res/anim/slide_in_right.xml?av=f) of those animations. 
 
 **Extended Note:** Check out [this stackoverflow post](http://stackoverflow.com/a/15816189/313399) if you are looking to animate the appearance of a DialogFragment.
 
@@ -689,7 +729,7 @@ In Android 5.0, several new animation features were introduced including:
  * [[Ripple Animation]] - Used provide an instantaneous visual confirmation at the point of contact when users interact with UI elements.
  * [[Circular Reveal Animation]] - Reveal is a new animation introduced in Android L that animates the view's clipping boundaries. Often used in conjunction with [[material floating action buttons|Floating Action Buttons]].
 
-Note that these animations are **lollipop only** and do not work on devices with an Android version less than API 21. Since less than 10% of devices have lollipop enabled, use of these animations is often not worth the effort.
+Note that these animations require **lollipop or newer** and do not work on devices with an Android version less than API 21. Around 30% of devices have at least lollipop (Dec 2015), so the time spent using one of these animations requires thought to determine if it is worth the effort.
 
 ## Particle Effects
 
@@ -703,7 +743,7 @@ Precisely because its main use is games, all engines have support for particle s
 
 * [AndroidViewAnimations](https://github.com/daimajia/AndroidViewAnimations) - Common property animations made easy.
 * [ListViewAnimations](https://github.com/nhaarman/ListViewAnimations) - List view item animations made simple including insertion and deletion.
-* [NineOldAndroids](http://nineoldandroids.com/) - Compatibility library supporting property animations all the way back to Android 1.0.
+* [NineOldAndroids](http://nineoldandroids.com/) - Compatibility library supporting property animations all the way back to Android 1.0 (deprecated but still works).
 * [Leonids](https://github.com/plattysoft/Leonids) - Simple particle effects for Android.
 
 ## References
@@ -722,3 +762,5 @@ Precisely because its main use is games, all engines have support for particle s
  * <http://java.dzone.com/articles/using-view-animations-android>
  * <http://mobile.dzone.com/articles/android-ui-action-layout>
  * <http://www.google.com/design/spec/animation/authentic-motion.html> 
+ * <https://plus.google.com/+JakeWharton/posts/hPZYyEXaSqk>
+ * <https://twitter.com/jakewharton/status/486346048755884034>

@@ -158,6 +158,8 @@ ThreadPoolExecutor executor = new ThreadPoolExecutor(
 );
 ```
 
+If you are initializing `ThreadPoolExecutor` within a service, make sure to create it within `onStartCommand()`.  Putting it in `onCreate()` will likely trigger `RequestRejectedException` errors.
+
 See additional options for control by reviewing [this advanced guide](http://thegreyblog.blogspot.com/2011/12/using-threadpoolexecutor-to-parallelize.html).
 
 #### Executing Runnables on ThreadPoolExecutor
@@ -283,6 +285,8 @@ First, you define a class within your application that extends `Service` and def
 import android.app.Service;
 
 public class MyCustomService extends Service {
+
+    @Override
     public void onCreate() {
         super.onCreate();
         // Fires when a service is first initialized
@@ -335,7 +339,7 @@ Notice that we specify this in the manifest file with the `name` and `exported` 
 If you create a custom `Service`, then you will **need to manage the background threading** yourself using the [[threading management options|Managing-Threads-and-Custom-Services#thread-management]] outlined in the earlier part of this guide. In particular, there are two options readily available:
 
 * **Sequential:** If you want the service to run a **single worker thread** sequentially processing tasks, [[use a HandlerThread|Managing-Threads-and-Custom-Services#using-a-handlerthread]].
-* **Concurrent:** If you want the service to run tasks concurrently within a thread pool, [[use a ThreadPoolExecute|Managing-Threads-and-Custom-Services#using-a-threadpoolexecutor]].
+* **Concurrent:** If you want the service to run tasks concurrently within a thread pool, [[use a ThreadPoolExecutor|Managing-Threads-and-Custom-Services#using-a-threadpoolexecutor]].
 
 For example, we are going to use a `HandlerThread` below to process the tasks in the background of the service:
 

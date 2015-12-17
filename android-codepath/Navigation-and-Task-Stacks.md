@@ -32,7 +32,7 @@ If the user were to open another separate application now, that app would have a
 
 ### Multiple Activity Instances
 
-This proces of multiple task stacks is just the beginning. The real point of understanding comes from exploring what happens when we launch the same activity multiple times. Because the activities in the back stack are never rearranged, every time an activity is started via an intent, a brand new instance of that activity is **created and pushed onto the stack**.
+This process of multiple task stacks is just the beginning. The real point of understanding comes from exploring what happens when we launch the same activity multiple times. Because the activities in the back stack are never rearranged, every time an activity is started via an intent, a brand new instance of that activity is **created and pushed onto the stack**.
 
 This means that if you have an activity (say the timeline for twitter), and you launch the timeline activity multiple times using different intents, then **multiple instances of that activity** will be tracked in the stack. 
 
@@ -177,3 +177,4 @@ Check out the excellent [Providing Back Navigation](http://developer.android.com
  * <http://blog.akquinet.de/2011/02/25/android-activities-and-tasks-series-%E2%80%93-activity%C2%A0attributes/> 
  * <http://www.sitepoint.com/activities-tasks-and-intents-oh-my/>
  * <https://www.inkling.com/read/programming-android-mednieks-1st/chapter-11/a-flowing-and-intuitive-user>
+ * <http://inthecheesefactory.com/blog/understand-android-activity-launchmode/en>

@@ -4,14 +4,24 @@
 
 For example, if we are using an email app and we are listing the inbox folder, the promoted action might be composing a new message.
 
-<img src="https://github.com/makovkastar/FloatingActionButton/raw/master/art/demo.gif" width="185" alt="FAB1" />&nbsp;
-<img src="https://i.imgur.com/SBbLXo2.png" width="200" alt="FAB2" />
+<img src="http://i.imgur.com/BE7c4xy.gif" height="350" alt="FAB1" />&nbsp;
+<img src="http://i.imgur.com/qij0f3K.gif" height="350" alt="FAB2" />
 
 The floating action button represents **the primary action** within a particular screen. More info and use cases of the FAB button from Google’s official [design specs can be found here](http://www.google.com/design/spec/components/buttons.html#buttons-floating-action-button).
 
 ## Usage
 
 Google made available during Google I/O 2015 a support library to create floating action buttons library.  In the past, third-party libraries such as [makovkastar/FloatingActionButton](https://github.com/makovkastar/FloatingActionButton) and [futuresimple/android-floating-action-button](https://github.com/futuresimple/android-floating-action-button) had to be used.
+
+### Floating Action Icons
+
+The floating action button uses the **same menu icons** used for the App Bar at the top of the screen. This means the image should be single color and fit the material design guidelines. The best source for these icons is the [material design icons site](https://materialdesignicons.com/) or the official [google material icons](https://www.google.com/design/icons/):
+
+[<img src="http://i.imgur.com/XXoaV5g.png" height="300" />](https://materialdesignicons.com/)
+&nbsp;
+[<img src="http://i.imgur.com/Oznsogy.png" height="300" />](https://materialdesignicons.com/)
+
+Once you've selected the icon to use, download the image by selecting the icon and then "Icon Package" and choose the "Android" package. Note that Mac users may need to use the [Unarchiver](http://wakaba.c3.cx/s/apps/unarchiver.html) to properly unzip the icon package. Bring the various drawables into the `drawable` folders within your Android app.
 
 ### Design Support Library
 
@@ -29,7 +39,7 @@ You should now be able to add the `android.support.design.widget.FloatingActionB
 
 In addition, assuming `xmlns:app="http://schemas.android.com/apk/res-auto` is declared as namespace the top of your layout, you can also define a custom attribute [`fabSize`](http://developer.android.com/reference/android/support/design/widget/FloatingActionButton.html#attr_android.support.design:fabSize) that can reference whether the button should be `normal` or `mini`. 
 
-To place the floating action button, you will use [CoordinatorLayout](http://developer.android.com/reference/android/support/design/widget/CoordinatorLayout.html).   A CoordinatorLayout helps facilitate interactions between views contained within it, which will be useful later to describe how to animate the button depending on scroll changes.  For now we can take advantage of a feature in CoordinatorLayout that allows us to hover one element over another.  We simply need to have the ListView and FloatingActionButton contained within the CoordinatorLayout and use the `layout_anchor` and `layout_anchorGravity` attributes. 
+To place the floating action button, we will use [CoordinatorLayout](http://developer.android.com/reference/android/support/design/widget/CoordinatorLayout.html).   A CoordinatorLayout helps facilitate interactions between views contained within it, which will be useful later to describe how to animate the button depending on scroll changes.  For now we can take advantage of a feature in CoordinatorLayout that allows us to hover one element over another.  We simply need to have the `ListView` and `FloatingActionButton` contained within the `CoordinatorLayout` and use the `layout_anchor` and `layout_anchorGravity` attributes. 
 
 ```xml
 <android.support.design.widget.CoordinatorLayout
@@ -72,8 +82,8 @@ To animate this part, you will need to take advantage of [CoordinatorLayout](htt
 
 #### Converting from ListView to RecyclerView
 
-Currently, you need to convert your ListViews to use [RecyclerView](http://developer.android.com/reference/android/support/v7/widget/RecyclerView.html). RecyclerView is the successor to ListView as described in [this section](http://guides.codepath.com/android/Using-the-RecyclerView#compared-to-listview).  There is no support built-in for CoordinatorLayout to work with ListView according to [this Google post](https://plus.google.com/101784949561498190574/posts/KPbsTY4NANx). You can review 
-this [guide](http://guides.codepath.com/android/Using-the-RecyclerView) to help make the transition.
+Currently, you need to convert your ListViews to use [RecyclerView](http://developer.android.com/reference/android/support/v7/widget/RecyclerView.html). RecyclerView is the successor to ListView as described in [[this section|Using-the-RecyclerView#compared-to-listview]].  There is no support built-in for CoordinatorLayout to work with ListView according to [this Google post](https://plus.google.com/101784949561498190574/posts/KPbsTY4NANx). You can review 
+this [[guide|Using-the-RecyclerView]] to help make the transition.
 
 ```xml
 <android.support.v7.widget.RecyclerView
@@ -155,11 +165,63 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
 }
 ```
 
-If you forget to implement this last step, you will see `Could not inflate Behavior subclass` error messages. See this [example code](https://github.com/ianhanniballake/cheesesquare/commit/aefa8b57e61266e4ad51bef36e669d69f7fd749c) for the full set of changes.
+If you forget to implement this last step, you will see `Could not inflate Behavior subclass` error messages. See this [example code](https://github.com/ianhanniballake/cheesesquare/blob/92bcf7c8b57459051424cd512a032c12d24a41b3/app/src/main/java/com/support/android/designlibdemo/ScrollAwareFABBehavior.java) for the full set of changes.
 
 *Note*: Normally when implementing `CoordinatorLayout` behaviors, we need to implement [layoutDependsOn()](https://developer.android.com/reference/android/support/design/widget/CoordinatorLayout.Behavior.html#layoutDependsOn(android.support.design.widget.CoordinatorLayout, V, android.view.View)) and [onDependentViewChanged()](https://developer.android.com/reference/android/support/design/widget/CoordinatorLayout.Behavior.html#onDependentViewChanged(android.support.design.widget.CoordinatorLayout, V, android.view.View)), which are used to track changes in other views contained within the CoordinatorLayout.  Since we only need to monitor scroll changes, we use the existing behavior defined for the Floating Action Button, which is currently implemented to track changes for Snackbars and AppBarLayout as discussed in this [blog post](http://android-developers.blogspot.com/2015/05/android-design-support-library.html).
 
-### With FloatingActionButton (Third-Party)
+### Embedding FloatingActionButton in Header
+
+A common effect is embedding the FAB near the header like this:
+
+<img src="http://s1.postimg.org/xrfwqpqgf/x_Cx_E0.png" width="200" />
+
+This can be achieved by use CoordinatorLayout as the root view. We need to specify `layout_anchor` for the FAB to the top view and `layout_anchorGravity` to to `bottom|right|end` like this:
+
+```xml
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/viewA"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.6"
+            android:background="@android:color/holo_purple"
+            android:orientation="horizontal"/>
+
+        <LinearLayout
+            android:id="@+id/viewB"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.4"
+            android:background="@android:color/holo_orange_light"
+            android:orientation="horizontal"/>
+
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_done"
+        app:layout_anchor="@id/viewA"
+        app:layout_anchorGravity="bottom|right|end"/>
+
+</android.support.design.widget.CoordinatorLayout>
+```
+
+For details check out [this stackoverflow post](http://stackoverflow.com/questions/24459352/how-can-i-add-the-new-floating-action-button-between-two-widgets-layouts). See the [[CoordinatorLayout guide|Handling-Scrolls-with-CoordinatorLayout]] for more details on that layout.
+
+### With Third-Party FloatingActionButton
 
 Using [makovkastar/FloatingActionButton](https://github.com/makovkastar/FloatingActionButton) library makes floating buttons quite simple to setup. See the [library readme](https://github.com/makovkastar/FloatingActionButton/blob/master/README.md) and the [sample code](https://github.com/makovkastar/FloatingActionButton/tree/master/sample/src/main/java/com/melnykov/fab/sample) for reference.
 
@@ -211,7 +273,7 @@ fab.attachToListView(listView); // or attachToRecyclerView
 
 We can attach to a `RecyclerView` with `fab.attachToRecyclerView(recyclerView)` or a `ScrollView` with `fab.attachToScrollView(scrollView)`
 
-One limitation in using this third-party library is that implementing [[endless scrolling|Endless-Scrolling-with-AdapterViews]] conflicts with this behavior because both attempt to listen for scroll events.  The floating action button that comes with support design library is the recommended approach now.
+One limitation in using this third-party library is that implementing [[endless scrolling|Endless-Scrolling-with-AdapterViews-and-RecyclerView]] conflicts with this behavior because both attempt to listen for scroll events.  The floating action button that comes with support design library is the recommended approach now.
 
 #### Adjust Button Type
 
@@ -272,7 +334,12 @@ fab.attachToListView(list, new ScrollDirectionListener() {
 
 ### Manual Implementations
 
-Instead of using a library we can also develop the floating action buttons manually. For manual implementations of the floating action button, see this [big nerd ranch guide](http://www.bignerdranch.com/blog/floating-action-buttons-in-android-l/) and the [survivingwithandroid walkthrough](http://www.survivingwithandroid.com/2014/09/android-floating-action-button.html).
+Instead of using a library we can also develop the floating action buttons manually. For manual implementations of the floating action button, see the following resources:
+
+ * [Big Nerd Ranch FAB guide](http://www.bignerdranch.com/blog/floating-action-buttons-in-android-l/)
+ * [SurvivingwithAndroid FAB Walkthrough](http://www.survivingwithandroid.com/2014/09/android-floating-action-button.html)
+
+In most cases, the FAB is much easier to implement using the [[Design Support Library]] as outlined earlier in this guide.
 
 ## References
 
@@ -282,5 +349,6 @@ Instead of using a library we can also develop the floating action buttons manua
 * <http://www.bignerdranch.com/blog/floating-action-buttons-in-android-l/>
 * <http://prolificinteractive.com/blog/2014/07/24/android-floating-action-button-aka-fab/>
 * <http://www.survivingwithandroid.com/2014/09/android-floating-action-button.html>
+* <https://android-arsenal.com/>
 * <https://android.googlesource.com/platform/frameworks/support.git/+/master/design/src/android/support/design/widget/FloatingActionButton.java>
 * <https://android.googlesource.com/platform/frameworks/support.git/+/master/design/res/values/styles.xml>

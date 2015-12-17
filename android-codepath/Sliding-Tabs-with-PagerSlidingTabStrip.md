@@ -1,4 +1,4 @@
-Prior to Android "L" preview, the easiest way to setup tabs with Fragments was to use ActionBar Tabs as described in [ActionBar Tabs with Fragments](http://guides.codepath.com/android/ActionBar-Tabs-with-Fragments) guide. However, all methods related to navigation modes in the ActionBar class (such as `setNavigationMode()`, `addTab()`, `selectTab()`, etc.) are now deprecated.
+Prior to Android "L" preview, the easiest way to setup tabs with Fragments was to use ActionBar Tabs as described in [[ActionBar Tabs with Fragments|ActionBar-Tabs-with-Fragments]] guide. However, all methods related to navigation modes in the ActionBar class (such as `setNavigationMode()`, `addTab()`, `selectTab()`, etc.) are now deprecated.
 
 As a result, tabs are now best implemented by leveraging the [[ViewPager|ViewPager-with-FragmentPagerAdapter]] with a custom "tab indicator" on top. In this guide, we will be using the [PagerSlidingTabStrip](https://github.com/astuetz/PagerSlidingTabStrip) to produce tabbed navigation within our app. 
 
@@ -31,8 +31,7 @@ Once you have included the library and synced with Gradle, we can use the `Pager
         app:pstsShouldExpand="true"
         app:pstsTextAllCaps="true"
         android:layout_width="match_parent"
-        android:layout_height="48dp">
-    </com.astuetz.PagerSlidingTabStrip>
+        android:layout_height="48dp" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
@@ -144,7 +143,7 @@ Finally, we need to attach our `ViewPager` to the `SampleFragmentPagerAdapter` a
 * Set the `ViewPager` on the `PagerSlidingTabStrip` to connect the pager with the tabs.
 
 ```java
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

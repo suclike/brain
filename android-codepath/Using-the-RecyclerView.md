@@ -9,7 +9,7 @@ If you want to use a `RecyclerView`, you will need to work with the following:
 
 <img src="https://developer.android.com/training/material/images/RecyclerView.png" width="500" alt="RecyclerView" />
 
-Furthermore, it provides animation support for `ListView` items whenever they are added or removed, which had been extremely difficult to do in the current implementation.  `RecyclerView` also begins to enforce the [ViewHolder pattern](http://guides.codepath.com/android/Using-an-ArrayAdapter-with-ListView#improving-performance-with-the-viewholder-pattern) too, which was already a recommended practice but now deeply integrated with this new framework.
+Furthermore, it provides animation support for `ListView` items whenever they are added or removed, which had been extremely difficult to do in the current implementation.  `RecyclerView` also begins to enforce the [[ViewHolder pattern|Using-an-ArrayAdapter-with-ListView#improving-performance-with-the-viewholder-pattern]] too, which was already a recommended practice but now deeply integrated with this new framework.
 
 For more details, see [this detailed overview](http://www.grokkingandroid.com/first-glance-androids-recyclerview/).
 
@@ -46,7 +46,7 @@ To create a custom layout manager, extend the [RecyclerView.LayoutManager](https
 
 ### `ItemAnimator`
 
-`RecyclerView.ItemAnimator` will animate `ViewGroup` modifications such as add/delete/select that are notified to adapter. `DefaultItemAnimator` can be used for basic default animations and works quite well.
+`RecyclerView.ItemAnimator` will animate `ViewGroup` modifications such as add/delete/select that are notified to adapter. `DefaultItemAnimator` can be used for basic default animations and works quite well.  See the [[section|Using-the-RecyclerView#animators]] of this guide for more information.
 
 ## Using the RecyclerView
 
@@ -99,7 +99,7 @@ public class Contact {
     private static int lastContactId = 0;
 
     public static List<Contact> createContactsList(int numContacts) {
-        List<Contact> contacts = new ArrayList<>();
+        List<Contact> contacts = new ArrayList<Contact>();
 
         for (int i = 1; i <= numContacts; i++) {
             contacts.add(new Contact("Person " + ++lastContactId, i <= numContacts / 2));
@@ -305,18 +305,18 @@ public class UserListActivity extends AppCompatActivity {
 
 Finally, compile and run the app and you should see something like the screenshot below. If you create enough items and scroll through the list, the views will be recycled and far smoother by default than the `ListView` widget:
 
-<img src="http://imgur.com/vbIL5HA" width="400" alt="Screenshot" />
+<img src="http://i.imgur.com/vbIL5HA.gif" width="400" alt="Screenshot" />
 
 ### Notifying the Adapter
 
-With `RecyclerView` as the data source changes, we need to keep the adapter notified of any changes. There are many method available to use when notifying the adapter of different changes:
+Unlike ListView, there is no way to add or remove items directly through the `RecyclerView` adapter.  You need to make changes to the data source directly and notify the adapter of any changes. There are many method available to use when notifying the adapter of different changes:
 
 | Method | Description |
 | ------ | ----------  |
-| `notifyDataSetChanged()` | Notify that the dataset has changed. |
 | `notifyItemChanged(int pos)` | Notify that item at position has changed. |
 | `notifyItemInserted(int pos)` | Notify that item reflected at position has been newly inserted. |
 | `notifyItemRemoved(int pos)` | Notify that items previously located at position has been removed from the data set. |
+| `notifyDataSetChanged()` | Notify that the dataset has changed.  Use only as last resort.|
 
 We can use these from the activity or fragment:
 
@@ -327,7 +327,46 @@ users.set(0, new User(...));
 adapter.notifyItemInserted(0);
 ```
 
-Every time we want to add or remove items from the recyclerview, we will need to explicitly inform to the adapter of the event. 
+Every time we want to add or remove items from the RecyclerView, we will need to explicitly inform to the adapter of the event.  Unlike the ListView adapter, a RecyclerView adapter should not rely on `notifyDataSetChanged()` since the more granular actions should be used.  See the [API documentation](https://developer.android.com/reference/android/support/v7/widget/RecyclerView.Adapter.html) for more details.
+
+### Scrolling to New Items
+
+If we are inserting elements to the front of the list and wish to maintain the position at the top, we can set the scroll position to the 1st element:
+
+```java
+adapter.notifyItemInserted(0);  
+rvContacts.scrollToPosition(0);   // index 0 position
+```
+
+If we are adding items to the end and wish to scroll to the bottom as items are added, we can notify the adapter that an additional element has been added and can call `smoothScrollToPosition()` on the RecyclerView:
+
+```java
+adapter.notifyItemInserted(contacts.size() - 1);  // contacts.size() - 1 is the last element position
+rvContacts.scrollToPosition(mAdapter.getItemCount() - 1); // update based on adapter 
+```
+
+### Implementing Endless Scrolling
+
+To implement fetching more data and appending to the end of the list as the user scrolls towards the bottom,  use the `addOnScrollListener()` from the `RecyclerView` and add an `onLoadMore` method leveraging the [[EndlessScrollViewScrollListener|Endless-Scrolling-with-AdapterViews-and-RecyclerView#implementing-with-recyclerview]] document in the guide.
+
+```java
+// Add scroll listener
+rvItems.addOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+  @Override
+  public void onLoadMore(int page, int totalItemsCount) {
+     // Load the data asynchronously from the network or other source
+     // Once the data has been retrieved...
+     // Update the adapter with new items, first saving the last known size
+     int curSize = adapter.getItemCount(); 
+     items.addAll(moreContacts);
+     // For efficiency purposes, only notify the adapter of what elements that got changed
+     // curSize will equal to the index of the first element inserted because the list is 0-indexed
+     adapter.notifyItemRangeInserted(curSize, items.size() - 1);
+   }
+});
+```
+
+With that listener, new items will be loaded automatically as the user begins to scroll towards the end of the existing list. 
 
 ## Configuring the RecyclerView
 
@@ -387,9 +426,11 @@ For example, a staggered grid might look like:
 
 We can build [our own custom layout managers](http://wiresareobsolete.com/2014/09/building-a-recyclerview-layoutmanager-part-1/) as outlined there.
 
-### Animators
+### Animators 
 
-RecyclerView supports custom animations for items as they enter, move, or get deleted. If you want to setup custom animations, first load the [third-party recyclerview-animators library](https://github.com/wasabeef/recyclerview-animators) into `app/build.gradle`:
+RecyclerView supports custom animations for items as they enter, move, or get deleted using [ItemAnimator](https://developer.android.com/reference/android/support/v7/widget/RecyclerView.ItemAnimator.html).  The default animation effects is defined by [DefaultItemAnimator](https://developer.android.com/intl/ko/reference/android/support/v7/widget/DefaultItemAnimator.html), and the complex implementation (see [source code)](https://android.googlesource.com/platform/frameworks/support/+/refs/heads/master/v7/recyclerview/src/android/support/v7/widget/DefaultItemAnimator.java) shows that the logic necessary to ensure that animation effects are performed in a specific sequence (remove, move, and add).
+
+Currently, the fastest way to implement animations with RecyclerView is to use third-party libraries.  The [third-party recyclerview-animators library](https://github.com/wasabeef/recyclerview-animators) contains a lot of animations that you can use without needing to build your own.  Simply edit your  `app/build.gradle`:
 
 ```gradle
 repositories {
@@ -410,6 +451,10 @@ recyclerView.setItemAnimator(new SlideInUpAnimator());
 For example, here's scrolling through a list after customizing the animation:
 
 <img src="https://i.imgur.com/v0VyQS8.gif" width="300" alt="Screenshot" />
+
+#### New ItemAnimator interface
+
+Starting in the [support v23.1.0](https://developer.android.com/intl/ko/tools/support-library/index.html#revisions) library for `RecyclerView`, there is also a new interface for the [ItemAnimator](https://developer.android.com/intl/ko/reference/android/support/v7/widget/RecyclerView.ItemAnimator.html#pubmethods) interface.   The old interface has now been deprecated to `SimpleItemAnimator` .  This library adds a [ItemHolderInfo](https://developer.android.com/intl/ko/reference/android/support/v7/widget/RecyclerView.ItemAnimator.ItemHolderInfo.html) class, which appears to be similar to the [MoveInfo](https://github.com/android/platform_frameworks_support/blob/master/v7/recyclerview/src/android/support/v7/widget/DefaultItemAnimator.java#L53-L63) class defined by `DefaultItemAnimator` but used more generically to pass state information between animation transition states.  It is likely that the next version of `DefaultItemAnimator` will be simplified to use this new class and revised interface.
 
 ### Heterogeneous Views
 
@@ -495,6 +540,24 @@ This creates the following effect:
 
 <img src="https://i.imgur.com/olMUglF.gif" width="400" alt="Screenshot" />
 
+
+#### Attaching Click Listeners with Decorators
+
+An alternate solution for setting up click handlers for each item within a `RecyclerView` is to use a decorator class as [outlined in this article](http://www.littlerobots.nl/blog/Handle-Android-RecyclerView-Clicks/). With [this clever decorator](https://gist.github.com/nesquena/231e356f372f214c4fe6), attaching a click handler is as simple as:
+
+```java
+ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(
+  new ItemClickSupport.OnItemClickListener() {
+      @Override
+      public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+          // do it
+      }
+  }
+);
+```
+
+Under the covers, this is using the same interface pattern described below.
+
 #### Attaching Click Handlers using Listeners
 
 In certain cases, you'd want to setup click handlers for views within the `RecyclerView` but define the click logic within the containing `Activity` or `Fragment` (i.e bubble up events from the adapter). To achieve this, [[create a custom listener|Creating-Custom-Listeners]] within the adapter and then fire the events upwards to an interface implementation defined within the parent:
@@ -506,7 +569,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     /***** Creating OnItemClickListener *****/
     
     // Define listener member variable    
-    private OnItemClickListener listener;
+    private static OnItemClickListener listener;
     // Define the listener interface
     public interface OnItemClickListener {
         void onItemClick(View itemView, int position);
@@ -558,7 +621,7 @@ See [this detailed stackoverflow post](http://stackoverflow.com/a/24933117/31339
 
 ## Implementing Pull to Refresh
 
-The `SwipeRefreshLayout` should be used to refresh the contents of a `RecyclerView` via a vertical swipe gesture. See our detailed [RecyclerView with SwipeRefreshLayout](http://guides.codepath.com/android/Implementing-Pull-to-Refresh-Guide#recyclerview-with-swiperefreshlayout) guide for a step-by-step tutorial on implementing pull to refresh.
+The `SwipeRefreshLayout` should be used to refresh the contents of a `RecyclerView` via a vertical swipe gesture. See our detailed [[RecyclerView with SwipeRefreshLayout|Implementing-Pull-to-Refresh-Guide#recyclerview-with-swiperefreshlayout]] guide for a step-by-step tutorial on implementing pull to refresh.
 
 ## References
 

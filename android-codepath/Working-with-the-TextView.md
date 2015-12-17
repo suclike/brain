@@ -2,7 +2,7 @@
 
 Every Android device comes with a collection of standard fonts: Droid Sans, Droid Sans Mono and Droid Serif. They were designed to be optimal for mobile displays, so these are the three fonts you will be working with most of the time and they can be styled using a handful of XML attributes. You might, however, see the need to use custom fonts for special purposes. 
 
-This guide will take a look at the [TextView](http://developer.android.com/reference/android/widget/TextView.html) and discuss common properties associated with this view as well as how to setup custom typefaces.
+This guide will take a look at the [TextView](http://developer.android.com/reference/androcuid/widget/TextView.html) and discuss common properties associated with this view as well as how to setup custom typefaces.
 
 ## Text Attributes
 
@@ -21,7 +21,7 @@ As stated in the overview, there are three different default typefaces which are
 
 Here's how they look:
 
-![Fonts](https://i.imgur.com/or5z86M.png)
+<img alt="fonts" src="http://i.imgur.com/BES7g98.png" width="400" />
 
 In addition to the above, there is another attribute value named "normal" which defaults to the sans typeface.
 
@@ -38,6 +38,10 @@ The `android:textStyle` attribute can be used to put emphasis on the text. The p
 />
 ```
 
+A sampling of styles can be seen below:
+
+<img alt="style" src="http://i.imgur.com/BcX2r9O.png" width="400" />
+
 ### Text Size
 
 `android:textSize` specifies the font size. Its value must consist of two parts: a floating-point number followed by a unit. It is generally a good practice to use the `sp` unit so the size can scale depending on user settings.
@@ -46,10 +50,16 @@ The `android:textStyle` attribute can be used to put emphasis on the text. The p
 <TextView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:text="15sp is the 'normal' size."
-    android:textSize="15sp"
+    android:text="14sp is the 'normal' size."
+    android:textSize="14sp"
 />
 ```
+
+A sampling of styles can be seen below:
+
+<img alt="style" src="http://i.imgur.com/4pimMzN.png" width="400" />
+
+Too many type sizes and styles at once can wreck any layout. The basic set of styles are based on a typographic scale of 12, 14, 16, 20, and 34. Refer to this [typography styles guide](https://www.google.com/design/spec/style/typography.html#typography-styles) for more details. 
 
 ### Text Truncation
 
@@ -60,7 +70,7 @@ There are a few ways to truncate text within a `TextView`. First, to restrict th
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minLines="1"
-    android:maxLines="3"
+    android:maxLines="2"
 />
 ```
 
@@ -68,14 +78,35 @@ In addition, we can use `android:ellipsize` to begin truncating text
 
 ```xml
 <TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    ...
     android:ellipsize="end"
     android:singleLine="true"
 />
 ```
 
-Following values are available for `ellipsize`: `start` for `...bccc`, `end` for `aaab...`, `middle` for `aa...cc`, and `marquee` for `aaabbbccc` sliding from left to right. There is a known issue with **ellipsize and multi-line text**, see [this MultiplelineEllipsizeTextView library](https://github.com/IPL/MultiplelineEllipsizeTextView) for an alternative.
+Following values are available for `ellipsize`: `start` for `...bccc`, `end` for `aaab...`, `middle` for `aa...cc`, and `marquee` for `aaabbbccc` sliding from left to right. Example:
+
+<img alt="style" src="http://i.imgur.com/NoKo7Ou.png" width="400" />
+
+There is a known issue with **ellipsize and multi-line text**, see [this MultiplelineEllipsizeTextView library](https://github.com/IPL/MultiplelineEllipsizeTextView) for an alternative.
+
+### Text Color
+
+The `android:textColor` and `android:textColorLink` attribute values are hexadecimal RGB values with an optional alpha channel, similar to what's found in CSS:
+
+```xml
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="A light blue color."
+    android:textColor="#00ccff"
+    android:textColorLink="#8DE67F"
+/>
+```
+
+The `android:textColorLink` attribute controls the highlighting for [[hyperlinks embedded within the TextView|Working-with-the-TextView#inserting-html-formatting]]. This results in:
+
+![](http://i.imgur.com/UlLSrEG.png)
 
 ### Text Shadow
 
@@ -94,40 +125,15 @@ The floating point numbers don't have a specific unit - they are merely arbitrar
     android:layout_height="wrap_content"
     android:text="A light blue shadow."
     android:shadowColor="#00ccff"
-    android:shadowRadius="1.5"
+    android:shadowRadius="2"
     android:shadowDx="1"
     android:shadowDy="1"
 />
 ```
 
-### Text Color
+This results in:
 
-The `android:textColor` attribute's value is a hexadecimal RGB value with an optional alpha channel, similar to what's found in CSS:
-
-```xml
-<TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="A light blue color."
-    android:textColor="#00ccff"
-/>
-```
-
-### Related Text Colors
-
-There are several related text color properties in addition such as `android:textColorHighlight`, `android:textColorHint`, and `android:textColorLink` which affect the properties for highlighting, hint, and link color respectively:
-
-```xml
-<TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:textColorHighlight="#7C82D2"
-    android:textColorHint="#2DC942"
-    android:textColorLink="#8DE67F"
-/>
-```
-
-In cases where we want to change the TextView colors within the theme itself, we need to [modify the styles.xml](http://stackoverflow.com/a/21984419) in these cases.
+![](http://i.imgur.com/blFEHxX.png)
 
 ## Inserting HTML Formatting
 
@@ -135,10 +141,14 @@ TextView natively supports [HTML](http://developer.android.com/reference/android
 
 ```java
 TextView view = (TextView)findViewById(R.id.sampleText);
-String formattedText = "This <i>is</i> a <b>test</b>";
+String formattedText = "This <i>is</i> a <b>test</b> of <a href='http://foo.com'>html</a>";
 // or getString(R.string.htmlFormattedText);
 view.setText(Html.fromHtml(formattedText));
 ```
+
+This results in:
+
+![](http://i.imgur.com/PEl2EKl.png)
 
 Note that all tags are not supported. See [this article](http://javatechig.com/android/display-html-in-android-textview) for a more detailed look at supported tags and usages. If you want to store your HTML text within `res/values/strings.xml`, you have to use CDATA to escape such as:
 
@@ -170,6 +180,10 @@ TextView has [native support](http://developer.android.com/reference/android/wid
 />
 ```
 
+This results in:
+
+![](http://i.imgur.com/73bwaRm.png)
+
 ### Issues with ListView
 
 One known issue when using `android:autoLink` or the `Linkify` class is that it may break the ability to respond to events on the ListView through `setOnItemClickListener`.  Check out [this solution](http://www.michaelevans.org/blog/2013/03/29/clickable-links-in-android-listviews/) which extends `TextView` in order to modify the `onTouchEvent` to correctly propagate the click.   You basically need to create a `LinkifiedTextView` and use this special View in place of any of your TextView's that need auto-link detection.
@@ -178,9 +192,13 @@ In addition, review [this stackoverflow post](http://stackoverflow.com/questions
 
 ## Using Custom Fonts
 
-We can actually use any custom font that we'd like within our applications. Check out [fontsquirrel](http://www.fontsquirrel.com/) for an easy source of free fonts. For example, we can download [Chantelli Antiqua](http://www.fontsquirrel.com/fonts/Chantelli-Antiqua) as an example. Download it and **place the TTF file in the ./assets/fonts directory**.
+We can actually use any custom font that we'd like within our applications. Check out [fontsquirrel](http://www.fontsquirrel.com/) for an easy source of free fonts. For example, we can download [Chantelli Antiqua](http://www.fontsquirrel.com/fonts/Chantelli-Antiqua) as an example. 
 
-We're going to use a basic layout file with a TextView, marked with an id of "custom_font" so we can access it in our code.
+Fonts are stored in the "assets" folder. In Android Studio, `File > New > folder > Assets Folder`. Now download any font and **place the TTF file in the `assets/fonts` directory**:
+
+![](http://i.imgur.com/2dxTeGY.png)
+
+We're going to use a basic layout file with a `TextView`, marked with an id of "custom_font" so we can access it in our code.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -198,7 +216,7 @@ We're going to use a basic layout file with a TextView, marked with an id of "cu
 </LinearLayout>
 ```
 
-Open your main activity file and insert this into the `onCreate()` method:
+To set the custom font manually, open your activity file and insert this into the `onCreate()` method:
 
 ```java
 // Get access to our TextView
@@ -209,11 +227,17 @@ Typeface font = Typeface.createFromAsset(getAssets(), "fonts/Chantelli_Antiqua.t
 txt.setTypeface(font);
 ```
 
-And this will result in:
+Alternatively, you can use the third-party [calligraphy library](https://github.com/chrisjenx/Calligraphy):
 
-![Custom](https://i.imgur.com/WW2QWpe.png)
+```
+<TextView fontPath="fonts/Chantelli_Antiqua.ttf"/>
+```
 
-You'll also want to keep an eye on the total size of your custom fonts, as this can grow quite large if you're using a lot of different typefaces.
+Either method will will result in:
+
+<img alt="custom" src="http://i.imgur.com/jlTQpEY.png" width="400" />
+
+You'll also want to keep an eye on the total size of your custom fonts, as this can grow quite large if you're using a lot of different typefaces. 
 
 ## Using Spans to Style Sections of Text
 
@@ -304,6 +328,8 @@ Which results in:
 ![EditText with drawable](https://i.imgur.com/GZiIf1C.png)
 
 The relevant attributes here are `drawableLeft`, `drawableRight`, `drawableTop` and `drawableBottom` along with `drawablePadding`. Check out [this TextView article](http://antonioleiva.com/textview_power_drawables/) for a more detailed look at how to use this functionality. 
+
+Note that if you want to be able to better control the size or scale of the drawables, check out [this handy TextView extension](http://stackoverflow.com/a/31916731/313399) or [this bitmap drawable approach](http://stackoverflow.com/a/29804171/313399). You can also make calls to [setCompoundDrawablesWithIntrinsicBounds](https://groups.google.com/forum/#!topic/android-developers/_Gzbe0KCP_0) on the `TextView`
 
 ## References
 

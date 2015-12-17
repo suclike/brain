@@ -9,7 +9,7 @@
 * [Profiling Android Apps - Performance Turning](https://www.youtube.com/watch?v=88nwiiVTh5w)
 * [Vogella Android Analysis Tools](http://www.vogella.com/tutorials/AndroidTools/article.html)
 * [Performance Course on Udacity](https://www.udacity.com/course/ud825)
-* [Performance Doc](https://docs.google.com/document/d/1EKVq2FzcLVJFbwUtaC3QRddSwtzs0BSKZahkQyeGyHo/pub?embedded=true)
+* [Performance Doc from Udacity](https://docs.google.com/document/d/1EKVq2FzcLVJFbwUtaC3QRddSwtzs0BSKZahkQyeGyHo/pub?embedded=true)
 
 In addition, this should include:
 
@@ -19,3 +19,14 @@ In addition, this should include:
 * LeakCanary for finding memory leaks easily
 * Allocation Tracker - Finding the places in your code that may contribute to memory trashing.
 * Batterystats - Shows where and how processes are drawing current from the battery.
+
+## Optimizing Performance
+
+Check out the following links regarding optimizing performance:
+
+* [[Layout Performance|Constructing-View-Layouts#optimizing-layout-performance]]
+* [[ViewHolder with ListView|Using-an-ArrayAdapter-with-ListView#improving-performance-with-the-viewholder-pattern]]
+* [Displaying Bitmaps Effectively](http://developer.android.com/training/displaying-bitmaps/index.html)
+* [Android Performance Tips](http://developer.android.com/training/articles/perf-tips.html)
+* [Managing App Memory](http://developer.android.com/training/articles/memory.html#YourApp)
+* [Layout Performance Guide](http://developer.android.com/training/improving-layouts/index.html)

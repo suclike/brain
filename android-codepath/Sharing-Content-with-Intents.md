@@ -22,11 +22,64 @@ startActivity(Intent.createChooser(sharingIntent,"Share using"));
 To send images or binary data:
 
 ```java
-Intent shareIntent = new Intent(Intent.ACTION_SEND);
+final Intent shareIntent = new Intent(Intent.ACTION_SEND);
 shareIntent.setType("image/jpg");
-Uri uri = Uri.fromFile(new File(getFilesDir(), "foo.jpg"));
-shareIntent.putExtra(Intent.EXTRA_STREAM, uri.toString());
+final File photoFile = new File(getFilesDir(), "foo.jpg");
+shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(photoFile));
 startActivity(Intent.createChooser(shareIntent, "Share image using"));
+```
+
+#### Sharing Multiple Types
+
+In certain cases, we might want to send an image along with text. This can be done with:
+
+```java
+String text = "Look at my awesome picture";
+Uri pictureUri = Uri.parse("file://my_picture");
+Intent shareIntent = new Intent();
+shareIntent.setAction(Intent.ACTION_SEND);
+shareIntent.putExtra(Intent.EXTRA_TEXT, text);
+shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+shareIntent.setType("image/*");
+shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+startActivity(Intent.createChooser(shareIntent, "Share images..."));
+```
+
+Sharing multiple images can be done with:
+
+```java
+Intent shareIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
+shareIntent.setType("image/*");
+```
+
+See this [stackoverflow post](http://stackoverflow.com/a/27501666) for more details. 
+
+**Note:** Facebook does not properly recognize multiple shared elements. See [this facebook specific bug for more details](https://developers.facebook.com/x/bugs/332619626816423/) and share using their SDK. 
+
+#### Share in Facebook
+
+Facebook doesn't work well with normal sharing intents when sharing multiple content elements as [discussed in this bug](https://developers.facebook.com/x/bugs/332619626816423/). To share posts with facebook, we need to:
+
+1. Create a [new Facebook app here](https://developers.facebook.com/apps/) (follow the instructions)
+2. Add the Facebook SDK to your Android project
+3. Share using this code snippet:
+
+```java
+   public void setupFacebookShareIntent() {
+        ShareDialog shareDialog;
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        shareDialog = new ShareDialog(this);
+
+        ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                .setContentTitle("Title")
+                .setContentDescription(
+                        "\"Body Of Test Post\"")
+                .setContentUrl(Uri.parse("http://someurl.com/here"))
+                .build();
+        
+        shareDialog.show(linkContent);
+    }
 ```
 
 ### Sharing Remote Images
@@ -102,7 +155,7 @@ and setup the "SD Card" within the emulator device settings:
 
 ### Sharing Remote Images (without explicit file IO)
 
-The second way to share an Image does not require you to write the image into a file.  This code can safely be executed on the UI thread.    The approach was suggested on this webpage http://www.nurne.com/2012/07/android-how-to-attach-image-file-from.html .
+The second way to share an Image does not require you to write the image into a file.  This code can safely be executed on the UI thread. The approach was suggested on this webpage http://www.nurne.com/2012/07/android-how-to-attach-image-file-from.html. 
 
 ```java
 ImageView siv = (ImageView) findViewById(R.id.ivResult);
@@ -118,48 +171,22 @@ return uri;
 
 You get the `Drawable` from the `ImageView`.  You get the `Bitmap` from the `Drawable`.  Put that bitmap into the Media image store.  That gives you a path which can be used instead of a file path or URL.  Note the original webpage had an additional problem with immutable bitmaps, solved by drawing the bitmap into a canvas (never shown on screen).  See linked page above for details.
 
+**Note:** There is a [common bug on emulators](https://code.google.com/p/android/issues/detail?id=75447) that will cause `MediaStore.Images.Media.insertImage` to fail with `E/MediaStore﹕ Failed to insert image` unless the media directory is first initialized as described in the link.
+
 ### ShareActionProvider
 
-This is how you can easily use an ActionBar share icon to activate a ShareIntent. We need to add an ActionBar menu item in `res/menu/` in the XML specifying the `ShareActionProvider` class.
+This is how you can easily use an ActionBar share icon to activate a ShareIntent. The below focuses on the **support ShareActionProvider** for use with `AppCompatActivity`.
 
 **Note:** This is **an alternative to using a sharing intent** as described in the previous section. You either can use a sharing intent **or** the provider as described below. 
 
-#### Without Support Library
-
-**Note:** `ShareActionProvider` is only available in API 14 or above unless the supportv7 library is included in which case you must follow the next section instead.
+First, make sure to add the appropriate permissions to your `AndroidManifest.xml`:
 
 ```xml
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/menu_item_share"
-        android:showAsAction="ifRoom"
-        android:title="Share"
-        android:actionProviderClass="android.widget.ShareActionProvider" />
-    ...
-</menu>
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 ```
 
-Get access to share provider menu item in Java so you can attach the share intent later:
-
-```java
-private ShareActionProvider miShareAction;
-
-@Override
-public boolean onCreateOptionsMenu(Menu menu) {
-    // Inflate menu resource file.
-    getMenuInflater().inflate(R.menu.second_activity, menu);
-    // Locate MenuItem with ShareActionProvider
-    MenuItem item = menu.findItem(R.id.menu_item_share);
-    // Fetch reference to the share action provider
-    miShareAction = (ShareActionProvider) item.getActionProvider();
-    // Return true to display menu
-    return true;
-}
-```
-
-#### With Support v7 Library
-
-**Note: This section requires the `supportv7` compatibility library to be included**
+Next, we need to add an ActionBar menu item in `res/menu/` in the XML specifying the `ShareActionProvider` class. 
 
 ```xml
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
@@ -174,7 +201,7 @@ public boolean onCreateOptionsMenu(Menu menu) {
 </menu>
 ```
 
-Get access to share provider menu item in Java so you can attach the share intent later:
+Next, get access to share provider menu item in the Activity so we can attach the share intent later:
 
 ```java
 private ShareActionProvider miShareAction;
@@ -194,9 +221,7 @@ public boolean onCreateOptionsMenu(Menu menu) {
 
 #### Attach Share Intent for Content
 
-Now, once you've setup the ShareActionProvider menu item (either for supportv7 or standard), construct and attach the share intent for the provider but only **after image has been loaded** as shown below using the `Callback` for `Picasso`.
-
-**Note:** The following requires a **recent release** of the third-party image library `Picasso` which supports completion callbacks. Make sure to use an updated the version of the library used by downloading [this Picasso jar](http://repo1.maven.org/maven2/com/squareup/picasso/picasso/2.3.4/picasso-2.3.4.jar).
+Now, once you've setup the ShareActionProvider menu item, construct and attach the share intent for the provider but only **after image has been loaded** as shown below using the `Callback` for `Picasso`.
 
 ```java
 @Override
@@ -234,16 +259,7 @@ public void setupShareIntent() {
 }
 ```
 
-Make sure to add the appropriate permissions to your `AndroidManifest.xml`:
-
-```xml
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-```
-
 Check out the [official guide for easy sharing](http://developer.android.com/training/sharing/shareaction.html) for more information.
-
-
 
 ## References
 

@@ -12,7 +12,7 @@ We have Android guides for everyone whether you are a **beginner, intermediate o
 
 Ever been **frustrated finding information on outdated one-off blog posts and tutorials** that have long since become irrelevant? How many times have you been googling to find your answer only exists on an obscure **2 year old StackOverflow post**? We believe there's got to be a better way. Why not have the community work together to create useful and detailed documentation for every aspect of Android (or any platform)? There's absolutely no reason that we should have to make do with vague and outdated content anymore.
 
-Read about our [[mission to change the way engineers learn new technologies|The CodePath Goal]] and check out how you can [[get involved|The-CodePath-Goal#how-do-i-help]]! In addition, we are at present a fledgling startup so if you like this guide and what we are trying to do, please consider following us on twitter [@codepath](https://twitter.com/codepath)! 
+Read about our [[mission to change the way engineers learn new technologies|CodePath-Goal]] and check out how you can [[get involved|CodePath-Goal#how-do-i-help]]! In addition, we are at present a fledgling startup so if you like this guide and what we are trying to do, please consider following us on twitter [@codepath](https://twitter.com/codepath)! 
 
 ## Overview
 
@@ -20,9 +20,9 @@ The cliffnotes below are **categorized by their topic**, so you can easily find 
 
 **Disclaimer:** We have scoured the web endlessly for content while creating these guides and adapted content from many source including the [Google Official Docs](http://developer.android.com/guide/components/index.html), [Vogella Tutorials](http://www.vogella.com/android.html) and countless other sources that had hidden gems of information. At the bottom of each guide, there are citations for the content we used. **We don't claim the content is original** (although we did develop quite a bit ourselves), but unlike those other sources listed, it is freely community editable. We have openly adapted, modified and brought together this content from all the sources we could find for the benefit of every engineer.
 
-Read more about [[us and our vision for all this|The CodePath Goal]]. If you want to **contribute to this guide**, please read the [[Contributing Guidelines]].
+Read more about [[us and our vision for CodePath|CodePath-Goal]]. If you want to **contribute to this guide**, please read the [[Contributing Guidelines]].
 
-## Live in San Francisco?
+## Living in the Bay Area?
 
 Located in the San Francisco Bay Area and interested in learning with others in a more structured program? Check out our local [Android](http://www.meetup.com/Learning-Android-Development) or [iOS](http://www.meetup.com/Learning-iOS-Development-SF/) meetup events. We have free evening events and at-cost 1-day workshops to make learning social and connect you with others passionate about mobile.
 
@@ -32,7 +32,8 @@ If you are an experienced engineer (2+ years of professional experience in softw
 
 **Totally new to Android?** Start here.
 
-* [[Beginning Android Resources]] (Detailed Post With Many Links)
+* [Getting Started as a Developer](http://courses.codepath.com/snippets/intro_to_android/non_coders) (New to programming?)
+* [[Getting Started with Android|Beginning Android Resources]] (Detailed Post With Many Links)
 * [Setting up Android Studio](http://goo.gl/X2SVFR) (Installation Slides) or [[Setting up IntelliJ IDEA]]
 * [[Installing a Faster Emulator|Genymotion-2.0-Emulators-with-Google-Play-support]] (Genymotion Guide)
 * [Architecture of Mobile Apps](http://goo.gl/AAsGLx) (Concept Slides)
@@ -58,10 +59,11 @@ Exploring the foundations of app development:
 * [[Using Context]] (What is context and how is it used?)
 * [[Android Directory Structure]] (Files and Folders for Android apps)
 * [[Organizing your Source Files]] (Cleaning up source of your apps)
-* [[Using Resource Files|Using String Resources]] (Understanding String Resources)
-* [[Understanding the Activity Lifecycle|The Activity Lifecycle]] (How does an activity work?)
+* [[Understanding App Resources]] (Understanding Strings and Resources)
+* [[Understanding the Activity Lifecycle|Activity Lifecycle]] (How does an activity work?)
 * [[Handling Configuration Changes]] (Screen Rotation)
 * [[Migrating to the AppCompat Library]] (Using the Support Libraries)
+* [[App Permissions|Understanding App Permissions]] (How to request the permissions you need) 
 
 ## Views and Layouts
 
@@ -93,11 +95,12 @@ Exploring the gritty details of views, layout, styling and common UI patterns:
 * [[Shared Element Activity Transition]] (Android 5.0)
 * [[Circular Reveal Animation]] (Android 5.0)
 * [[Design Support Library]] (Material Design Library)
+* [[Chrome Custom Tabs]]
 
 ### AdapterViews
 
 * [[Using an ArrayAdapter with ListView]] (with custom list items)
-* [[Endless Scrolling with AdapterViews]] (Infinite pagination)
+* [[Endless Scrolling with AdapterViews and RecyclerView]] (Infinite pagination)
 * [[Implementing Pull to Refresh Guide]]
 * [[Implementing a Horizontal ListView Guide]] (Scrolls horizontally)
 * [[Implementing a Heterogenous ListView]] (with different item types)
@@ -128,6 +131,7 @@ Exploring how to allow user interaction and navigation within an app:
 * [[Dialogs with DialogFragment|Using DialogFragment]] (Displaying a content overlay)
 * [[Implementing a Rate Me Feature]] (For getting Play Store ratings)
 * [[Repeating Periodic Tasks]] (Handler, ScheduledThreadPoolExecutor)
+* [[Using the App Toolbar]] (ActionBar Replacement)
 * [[Floating Action Buttons]] (Android 5.0, Promoted Action)
 * [[Handling Scrolls with CoordinatorLayout]] (Collapsing toolbars)
 
@@ -140,13 +144,13 @@ Exploring how to allow user interaction and navigation within an app:
 * [[Sharing Content with Intents]] (and ShareActionProvider)
 * [[Using Parcelable]] (Pass data fast between activities)
 * [[Book Search Tutorial]] (Toolbar with SearchView and sharing content)
-* [[Communicating with an Event Bus]] (Using Otto to publish and receive events)
 
 ## Networking and Models
 
 Diving into the networking and model layers for data-driven apps:
 
 * [[Sending and Managing Network Requests]] (API Calls, Image Downloading)
+* [[Displaying Images with the Picasso Library]] (Remote Image Downloading)
 * [[Converting JSON to Models]] (JSON to Objects Deserialization)
 * [[Leveraging the Gson Library]] (JSON deserialization library)
 * [[Creating and Executing Async Tasks]] (Long-running Background Tasks)
@@ -194,7 +198,8 @@ Understanding how to build powerful and flexible views using Fragments:
 Exploring sensors and components available via the Android SDK:
 
 * [[Accessing the Camera and Stored Media]] (Camera, Photo Roll)
-* [[Listening to Sensors and Location]] (Light, Accelerometer, Location)
+* [[Retrieving Location with LocationServices API]] (Location)
+* [[Listening to Sensors using SensorManager]] (Light, Accelerometer)
 * [[Video and Audio Playback and Recording]] (MediaPlayer, VideoView)
 * [[Google Maps Setup Guide|Google Maps Fragment Guide]] (and [[Setup Genymotion|Google-Maps-Fragment-Guide#installing-genymotion]])
 * [[Google Maps API v2 Usage]] (Markers, InfoWindow)
@@ -220,8 +225,26 @@ Covering automated testing frameworks and tools for Android:
 * [[UI Testing with Robotium]] (**Needs Attention**)
 * [[Android Testing Framework]] (**Needs Attention**)
 
+## Libraries
 
-## Workflow Guides
+Covers usage of more advanced third-party libraries and SDKs that save time and improve the maintainability of your code:
+
+* [[Must Have Libraries]] (Networking, Persistence, Compatibility, Convenience, etc)
+* [[Popular External Tools]] (Analytics, Crash Reporting)
+* [[Dependency Injection with Dagger 2]] (**Needs Attention**)
+* [[Reducing View Boilerplate with Butterknife]] (View Annotations)
+* [[Communicating with an Event Bus]] (Using Otto to publish and receive events)
+
+## Production
+
+Covers guides specifically related to developing and publishing robust Android applications:
+
+* [Publishing to the Play Store](http://goo.gl/mUlGL1) (Slides)
+* [[Publishing with Android Studio|Publishing-to-the-Play-Store]]
+* [[Debugging and Profiling Apps]] (**Needs Attention**)
+* [Android Best Practices](https://github.com/futurice/android-best-practices)
+
+## Workflow
 
 Focused on issues like deployment, dependency management, etc:
 
@@ -230,16 +253,12 @@ Focused on issues like deployment, dependency management, etc:
 * [[Installing Android SDK Tools]]
 * [[Building Gradle Projects with Jenkins CI]]
 * [[Setting up Travis CI]]
-* [[Must Have Libraries]] (Networking, Persistence, Compatibility, Convenience, etc)
-* [Publishing to the Play Store](http://goo.gl/mUlGL1) (Slides)
-* [[Publishing with Android Studio|Publishing-to-the-Play-Store]]
-* [[Popular External Tools]] (Analytics, Crash Reporting)
 * [[Collaborating on Projects with Git]] (Git, Team)
-* [[Debugging and Profiling Apps]] (**Needs Attention**)
-* [[Dependency Injection with Dagger 2]] (**Needs Attention**)
-* [Android Best Practices](https://github.com/futurice/android-best-practices)
+* [[Presenting an Android Device]] (Cast Device to Laptop)
+* [[Recording Video of an Android Device]] 
 
 ## Contributing 
 
 * [[Contributing back to Android]]
+* [[Building your own Android Library]]
 * [[Open Source projects for Android Development]]

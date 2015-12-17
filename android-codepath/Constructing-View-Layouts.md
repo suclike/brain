@@ -194,15 +194,15 @@ The only way to fulfill this requirement is to expand the height of the second b
 
 ## PercentRelativeLayout
 
-PercentRelativeLayout, a recent undocumented addition to the [[Design Support Library]], enables the ability to specify not only elements relative to each other but also the total percentage of available space.   
+`PercentRelativeLayout`, a recent addition to the [[Design Support Library]], enables the ability to specify not only elements relative to each other but also the total percentage of available space.  In the past, in order to position two elements next to each other with equal height, you would normally have to create a `LinearLayout` within a `RelativeLayout`.  `PercentRelativeLayout` helps solves this issue.
 
 <img src="http://imgur.com/CmMsIgp.png"/>
 
-To use, you need to add this library to your Gradle dependency list:  
+To use, follow the [[setup guide|Design-Support-Library#setup]] and make sure the Gradle dependency is defined:
 
 ```gradle
 dependencies {
-    compile 'com.android.support:percent:22.2.0'
+    compile 'com.android.support:percent:23.1.0'
 }
 ```
 
@@ -246,11 +246,58 @@ An example of a layout used to describe the image above is shown below (taken fr
 </android.support.percent.PercentRelativeLayout>
 ```
 
+#### Margin Percentages
+
+The margins can also be set to a percentage of the total widths as well:
+
+  * `app:layout_marginStartPercent`
+  * `app:layout_marginEndPercent`
+  * `app:layout_marginTopPercent`
+  * `app:layout_marginBottomPercent`
+
+We can also define `app:layout_marginPercent` that will be to all four values above.
+
+#### Aspect Ratio
+
+Similar to how [[ImageView|Working-with-the-ImageView#sizing-imageview-controls|]]'s `adjustViewBounds:true` can be used to scale the image according to its aspect ratio, we can also use `PercentRelativeLayout` to define an aspect ratio for a layout.  If one dimension is set to `0dp` and no percent scaling is associated with it, setting a percentage on the `app:layout_aspectRatio` attribute can scale the other to meet the ratio:
+
+```xml
+<android.support.percent.PercentRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#ff00ff22"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- not using aspectRatio here -->
+    <View
+        android:id="@+id/view1"
+        android:background="#ff44aacc"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        app:layout_heightPercent="50%"/>
+
+    <!-- using aspectRatio here -->
+    <View
+        android:layout_below="@id/view1"
+        android:background="#ffe40000"
+        android:layout_width="300dp"
+        android:layout_height="0dp"
+        app:layout_aspectRatio="160%"/>
+
+</android.support.percent.PercentRelativeLayout>
+
+```
+
+The resulting layout appears as follows:
+
+<img src="http://imgur.com/jBj47AS.png"/>
+
 ## FrameLayout
 
 In a frame layout, the children are displayed with a z-index in the order of how they appear.  Put simply, the last child added to a `FrameLayout` will be drawn on top of all the previous children.  Think of it like a stack of items, the item last put on the stack will be drawn on top of the items below it.  This layout makes it very easy to draw on top of other layouts, especially for tasks such as button placement. 
 
-To arrange the children inside of a `FrameLayout` use the `android:gravity` attribute along with whatever `android:padding` and `android:margin` you need. 
+To arrange the children inside of a `FrameLayout` use the `android:layout_gravity` attribute along with whatever `android:padding` and `android:margin` you need. 
 
 Example of FrameLayout snippet:
 ```xml
@@ -288,7 +335,7 @@ In this example, an `ImageView` is set to the full size of the `FrameLayout`.  W
 
 To optimize layout performance, minimize the number of instantiated layouts and especially minimize deep nested layouts whenever possible. This is why you should generally use a `RelativeLayout` whenever possible instead of nested `LinearLayout`. Review the following references for more detail on optimizing your view hierarchy:
 
-- [Android Layout Tricks](http://android-developers.blogspot.ca/2009/02/android-layout-tricks-1.html?m=1)
+- [Android Layout Tricks](http://android-developers.blogspot.ca/2009/02/android-layout-tricks-1.html)
 - [Optimizing Layouts](http://developer.android.com/training/improving-layouts/optimizing-layout.html)
 - [Layout Optimization](http://code.tutsplus.com/tutorials/android-sdk-tools-layout-optimization--mobile-5245)
 
@@ -302,3 +349,4 @@ To optimize layout performance, minimize the number of instantiated layouts and 
  * <http://www.androidhive.info/2011/07/android-layouts-linear-layout-relative-layout-and-table-layout/>
  * <http://logc.at/2011/10/18/when-to-use-linearlayout-vs-relativelayout/>
  * <http://developer.android.com/reference/android/widget/FrameLayout.html>
+ * <https://plus.google.com/+AndroidDevelopers/posts/C8oaLunpEEj>

@@ -2,9 +2,9 @@
 
 Network requests are used to retrieve or modify API data or media from a server. This is a very common task in Android development especially for dynamic data-driven clients.
 
-The underlying Java class used for network connections is [HTTPURLConnection](http://developer.android.com/reference/java/net/HttpURLConnection.html) or [DefaultHTTPClient](http://developer.android.com/reference/org/apache/http/impl/client/DefaultHttpClient.html). Both of these are lower-level and require completely manual management of parsing the data from the input stream and executing the request asynchronously.
+The underlying Java class used for network connections is [HttpUrlConnection](http://developer.android.com/reference/java/net/HttpURLConnection.html) or [DefaultHTTPClient](http://developer.android.com/reference/org/apache/http/impl/client/DefaultHttpClient.html).  Both of these are lower-level and require completely manual management of parsing the data from the input stream and executing the request asynchronously.  DefaultHTTPClient, otherwise known as the Apache HTTP Client, has been [deprecated] (https://developer.android.com/about/versions/marshmallow/android-6.0-changes.html#behavior-apache-http-client) since Android 6.0.  The reason for two different HTTP clients is described in this [blog article](http://android-developers.blogspot.com/2011/09/androids-http-clients.html).
 
-For most common cases, we are better off using a popular third-party library called [android-async-http](http://loopj.com/android-async-http/) or [Retrofit](http://square.github.io/retrofit/) which will handle the entire process of sending and parsing network requests for us in a more robust and easy-to-use way.
+For most common cases, we are better off using a popular third-party library called [android-async-http](http://loopj.com/android-async-http/) or [OkHttp](http://square.github.io/okhttp/) which will handle the entire process of sending and parsing network requests for us in a more robust and easy-to-use way.
 
 ### Permissions
 
@@ -44,13 +44,11 @@ There are at least two popular third-party networking libraries you should consi
 
 * See the [[Android Async Http Client guide|Using-Android-Async-Http-Client]] for making basic network calls.
 
-* See the [OkHttp recipes](https://github.com/square/okhttp/wiki/Recipes) for making synchronous and asynchronous calls.  
+* See the [[OkHttp guide|Using-OkHttp]] for making synchronous and asynchronous calls.  
 
-    - Be aware that callbacks occur on a separate thread.  If you need to update the UI after an asynchronous call, you need to posting back to the main thread as discussed in this [Stack Overflow article](http://stackoverflow.com/questions/24246783/okhttp-response-callbacks-on-the-main-thread).
+    - See also the [[Retrofit guide|Consuming-APIs-with-Retrofit]], which uses OkHttp and makes it easier to make more RESTful API calls.  Read through [[this guide|Leveraging-the-Gson-Library]] to understand how the Gson library works with Retrofit.
 
-    - See also the [[Retrofit guide|Consuming-APIs-with-Retrofit]], which uses OkHttp and makes it easier to make more RESTful API calls.  
-
-There can be a bit of a learning curve with using OkHttp and the [[Gson|Leveraging-the-Gson-Library]] library, so your best bet when first learning is to use Android Async Http Client.
+There can be a bit of a learning curve when using these libraries, so your best bet when first learning is to use Android Async Http Client.  With OkHttp you also have to deal with the complexity of whether your callbacks need to be run on the main thread to update the UI, as explained in the guide.
 
 ### Sending an HTTP Request (The "Hard" Way)
 
@@ -107,17 +105,7 @@ private void downloadResponseFromNetwork() {
 
 ### Displaying Remote Images (The "Easy" Way)
 
-Displaying images is easiest using a third party library such as [Picasso](http://square.github.io/picasso/) from Square which will download and cache remote images and abstract the complexity behind an easy to use DSL.
-
-Adding Picasso to our `app/build.gradle` file:
-
-```gradle
-dependencies {
-    compile 'com.squareup.picasso:picasso:2.5.2'
-}
-```
-
-We can then load a remote image into any `ImageView` with:
+Displaying images is easiest using a third party library such as [[Picasso|Displaying-Images-with-the-Picasso-Library]] from Square which will download and cache remote images and abstract the complexity behind an easy to use DSL:
 
 ```java
 String imageUri = "https://i.imgur.com/tGbaZCY.jpg";
@@ -125,16 +113,7 @@ ImageView ivBasicImage = (ImageView) findViewById(R.id.ivBasicImage);
 Picasso.with(context).load(imageUri).into(ivBasicImage);
 ```
 
-We can do more sophisticated work with Picasso configuring placeholders, error handling, adjusting size of the image, and scale type with:
-
-```java
-Picasso.with(context).load(imageUri).fit().centerCrop()
-    .placeholder(R.drawable.user_placeholder)
-    .error(R.drawable.user_placeholder_error)
-    .into(imageView);
-```
-
-For more details check out the [Picasso](http://square.github.io/picasso/) documentation. 
+Refer to our [[Picasso Guide|Displaying-Images-with-the-Picasso-Library]] for more detailed usage information and configuration.
 
 ### Displaying Remote Images (The "Hard" Way)
 

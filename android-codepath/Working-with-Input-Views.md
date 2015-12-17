@@ -26,8 +26,8 @@ There are many input fields available, use the handy chart below to determine wh
 | Type            | Inputs                                |
 | --------------- | ----------------------------------    |
 | Single Action   | [Button](http://developer.android.com/guide/topics/ui/controls/button.html), [ImageButton](https://developer.android.com/reference/android/widget/ImageButton.html) |
-| Free Text       | [[TextView|Working-with-the-TextView]], [AutoCompleteTextView](https://developer.android.com/reference/android/widget/AutoCompleteTextView.html) |
-| Integer         | [[TextView|Working-with-the-TextView]], [[NumberPicker|Working-with-Input-Views#numberpicker]], [SeekBar](http://developer.android.com/reference/android/widget/SeekBar.html) |
+| Free Text       | [[EditText|Working-with-the-EditText]], [AutoCompleteTextView](https://developer.android.com/reference/android/widget/AutoCompleteTextView.html) |
+| Integer         | [[EditText|Working-with-the-EditText]], [[NumberPicker|Working-with-Input-Views#numberpicker]], [SeekBar](http://developer.android.com/reference/android/widget/SeekBar.html) |
 | Boolean         | [[Checkboxes|Working-with-Input-Views#checkboxes]],  [Switch](http://developer.android.com/reference/android/widget/Switch.html) |
 | Single Choice    | [[Spinner|Working-with-Input-Views#spinners]], [[Radio Buttons|Working-with-Input-Views#radio-buttons]], [AutoCompleteTextView](https://developer.android.com/reference/android/widget/AutoCompleteTextView.html) |
 | Multiple Choice | [[Checkboxes|Working-with-Input-Views#checkboxes]] |
@@ -38,7 +38,7 @@ There are many third-party libraries available to improve input selection within
 
 ### Text Fields
 
-If you are using an EditText, you should always specify the [hint](http://guides.codepath.com/android/Working-with-the-EditText#displaying-placeholder-hints) and [input type](http://guides.codepath.com/android/Working-with-the-EditText#customizing-the-input-type).  
+If you are using an EditText, you should always specify the [[hint|Working-with-the-EditText#displaying-placeholder-hints]] and [[input type|Working-with-the-EditText#customizing-the-input-type]].  
 
 ### Date and Time Pickers
 
@@ -46,8 +46,12 @@ Often within an app you will need the user to select a time or date for an event
 
  * [DateTimePicker](https://github.com/flavienlaurent/datetimepicker) - Contains the beautiful DatePicker and TimePicker that can be seen in the new Google Agenda app.
  * [BetterPickers](https://github.com/derekbrameyer/android-betterpickers) - DialogFragments modeled after the AOSP Clock and Calendar apps to improve UX for picking time, date, numbers, and other things.
+ * [MaterialDateTimePicker](https://github.com/wdullaer/MaterialDateTimePicker) - Material Design styled DatePicker and TimePicker.
+
+DateTimerPicker and MaterialDateTimePicker are both forks from the original Android open source datetime picker located [here](https://android.googlesource.com/platform/frameworks/opt/datetimepicker/).  MaterialDateTimePicker however does not use the Support Fragment Manager for reasons stated [here](https://github.com/wdullaer/MaterialDateTimePicker#why-not-use-supportdialogfragment), so if you need it in your project, you will need to download the original source, create a separate project, and modify the [import statements](https://android.googlesource.com/platform/frameworks/opt/datetimepicker/+/master/src/com/android/datetimepicker/date/DatePickerDialog.java#21).
 
 Using one of these should make selecting dates and times much easier. See [this list of picker libraries](https://android-arsenal.com/tag/27) for alternatives. 
+
 
 ### Checkboxes
 

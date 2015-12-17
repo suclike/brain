@@ -46,7 +46,9 @@ public class EditNameDialog extends DialogFragment {
 	private EditText mEditText;
 
 	public EditNameDialog() {
-		// Empty constructor required for DialogFragment
+		// Empty constructor is required for DialogFragment
+                // Make sure not to add arguments to the constructor
+                // Use `newInstance` instead as shown below
 	}
 	
 	public static EditNameDialog newInstance(String title) {
@@ -60,19 +62,25 @@ public class EditNameDialog extends DialogFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_edit_name, container);
+		return inflater.inflate(R.layout.fragment_edit_name, container);
+	}
+
+	@Override
+	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		// Get field from view
 		mEditText = (EditText) view.findViewById(R.id.txt_your_name);
+		// Fetch arguments from bundle and set title
 		String title = getArguments().getString("title", "Enter Name");
 		getDialog().setTitle(title);
-		// Show soft keyboard automatically
+		// Show soft keyboard automatically and request focus to field
 		mEditText.requestFocus();
 		getDialog().getWindow().setSoftInputMode(
-				WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-		return view;
+		    WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 	}
 }
 ```
-and showing the dialog in an Activity (extending FragmentActivity or AppCompatActivity):
+and showing the dialog in an Activity extending `AppCompatActivity`:
 
 ```java
 // Note: `FragmentActivity` works here as well
@@ -137,11 +145,10 @@ class MyAlertDialogFragment extends DialogFragment {
 }
 ```
 
-and to display the alert dialog in an activity (extending `FragmentActivity` or `AppCompatActivity`):
+and to display the alert dialog in an activity extending `AppCompatActivity`:
 
 ```java
-// Note: `AppCompatActivity` works here as well
-public class FragmentDialogDemo extends FragmentActivity {
+public class FragmentDialogDemo extends AppCompatActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
   	super.onCreate(savedInstanceState);
@@ -198,7 +205,7 @@ public class EditNameDialog extends DialogFragment implements OnEditorActionList
 and have the activity define the action to take when the dialog has the information:
 
 ```java
-public class FragmentDialogDemo extends FragmentActivity implements EditNameDialogListener {
+public class FragmentDialogDemo extends AppCompatActivity implements EditNameDialogListener {
   // ...
   
   @Override
@@ -212,18 +219,184 @@ public class FragmentDialogDemo extends FragmentActivity implements EditNameDial
 
 ## Styling Dialogs
 
-Styling a DialogFragment with a custom layout works just the [[same as styling any views|Styles-and-Themes]]. Styling an `AlertDialog` requires changing several key properties in `styles.xml` such as the `android:alertDialogTheme` as shown in this app [here](https://github.com/aliHafizji/Cheddar-Android/blob/master/res/values/styles_cheddar.xml#L15) and defining your own dialog style extending from `@android:style/Theme.Holo.Light.Dialog` as shown [here](https://github.com/aliHafizji/Cheddar-Android/blob/master/res/values/styles_cheddar.xml#L15).
+### Styling Custom Dialog
 
-## Things To Note
+Styling a DialogFragment with a custom layout works just the [[same as styling any views|Styles-and-Themes]]. Styling a dialog or `AlertDialog` requires changing several key properties in `styles.xml` such as the `dialogTheme` and `alertDialogTheme` as shown in this app [here](https://github.com/irccloud/android/blob/master/res/values/styles.xml) and shown below in `res/values/styles.xml`:
 
-* Notice that we are using the support library version of fragments for better compatibility in our code samples. The non-support version works identically.
-* Dialogs are just classes that extend `DialogFragment` and define the view to display in the floating content area.
-* `DialogFragment` classes must define an empty constructor as shown in the code samples, otherwise the Android system will raise an exception when it attempts to instantiate the fragment.
-* After loading the initial view, the activity immediately shows the dialog using the show() method which allows the fragment manager to keep track of the state and gives us certain things for free such as the back button dismissing the fragment.
-* In the code snippets above, notice the use of `requestFocus` and input modes to control the appearance of the soft keyboard when the dialog appears.
-* We can dismiss a dialog one of two ways. Here we are calling `dismiss()` within the Dialog class itself. It could also be called from the Activity like the `show()` method.
+```xml
+<!-- In res/values/colors.xml -->
+<color name="dark_blue">#180065</color>
+<color name="light_blue">#334ee9ff</color>
+<color name="medium_green">#3d853e</color>
+<color name="light_green">#3c2ae668</color>
 
-### Different Dialog Types
+<!-- In res/values/styles.xml -->
+<style name="AppTheme" parent="Theme.AppCompat.Light">
+    <!-- Apply default style for dialogs -->
+    <item name="android:dialogTheme">@style/AppDialogTheme</item>
+    <!-- Apply default style for alert dialogs -->
+    <item name="android:alertDialogTheme">@style/AppAlertTheme</item>
+</style>
+
+<!-- Define your custom dialog theme here extending from base -->
+<style name="AppDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+    <!-- Define color properties as desired -->
+    <item name="colorPrimary">@color/dark_blue</item>
+    <item name="colorPrimaryDark">#000</item>
+    <item name="android:textColorHighlight">@color/light_blue</item>
+    <item name="colorAccent">@color/dark_blue</item>
+    <item name="colorControlNormal">@color/dark_blue</item>
+    <!-- Define window properties as desired -->
+    <item name="android:windowNoTitle">false</item>
+    <item name="android:windowFullscreen">false</item>
+    <item name="android:windowBackground">@color/medium_green</item>
+    <item name="android:windowIsFloating">true</item>
+    <item name="android:windowCloseOnTouchOutside">true</item>
+</style>
+
+<!-- Define your custom alert theme here extending from base -->
+<style name="AppAlertTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <item name="colorPrimary">@color/dark_blue</item>
+    <item name="colorAccent">@color/dark_blue</item>
+    <item name="colorPrimaryDark">#000</item>
+    <item name="colorControlNormal">@color/dark_blue</item>
+    <item name="android:textColorHighlight">@color/light_blue</item>
+</style>
+```
+
+### Styling Titlebar of Dialog
+
+The titlebar can be styled using the "android:windowTitleStyle" as follows:
+
+```xml
+<style name="AppTheme" parent="Theme.AppCompat.Light">
+    <!-- Apply default style for dialogs -->
+    <item name="android:dialogTheme">@style/AppDialogTheme</item>
+    <!-- Apply default style for alert dialogs -->
+    <item name="android:alertDialogTheme">@style/AppAlertTheme</item>
+</style>
+
+<style name="AppDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+    <item name="android:windowTitleStyle">@style/DialogWindowTitle</item>
+    <!-- ...other stuff here... -->
+</style>
+
+
+<style name="AppAlertTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <item name="android:windowTitleStyle">@style/DialogWindowTitle</item>
+    <!-- ...other stuff here... -->
+</style>
+
+<style name="DialogWindowTitle" parent="Base.DialogWindowTitle.AppCompat">
+    <item name="android:background">@color/light_green</item>
+    <item name="android:gravity">center</item>
+    <item name="android:textAppearance">@style/DialogWindowTitleText</item>
+</style>
+
+<style name="DialogWindowTitleText" parent="@android:style/TextAppearance.DialogWindowTitle">
+    <item name="android:textSize">24sp</item>
+</style>
+```
+
+### Removing the TitleBar from the Dialog
+
+The TitleBar can be easily removed from your `DialogFragment` by overriding the `onCreateDialog` method:
+
+```java
+@Override
+public Dialog onCreateDialog(Bundle savedInstanceState) {
+    Dialog dialog = super.onCreateDialog(savedInstanceState);
+    // request a window without the title
+    dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+    return dialog;
+}
+```
+
+This will give you a dialog box without a title bar. Read more [in this StackOverflow post](http://stackoverflow.com/questions/15277460/how-to-create-a-dialogfragment-without-title)
+
+### Transparent Dialogs
+
+We can make the dialog (or the title of the dialog) translucent using the `android:windowBackground` property:
+
+```xml
+<style name="AppDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+    <item name="android:windowIsTranslucent">true</item>
+    <item name="android:windowBackground">@android:color/transparent</item>
+    <!-- ...other stuff here... -->
+</style>
+```
+
+Note that this removes the [default background image](https://github.com/android/platform_frameworks_support/blob/master/v7/appcompat/res/drawable/abc_dialog_material_background_light.xml) from the dialog `@drawable/abc_dialog_material_background_light` and as a result the shadow and border is removed.
+
+To complete the transparent effect, make sure to **set the alpha channel of the background colors** as [outlined here](http://stackoverflow.com/a/16890937) to make any background colors semi-transparent.
+
+### Styling with Third-Party Libraries
+
+Note that [[third party material libraries|Material-Design-Primer#dialog-styles]] such as [material-dialogs](https://github.com/afollestad/material-dialogs) can be used to simplify and improve dialog styling as well.
+
+![Material Dialog](https://i.imgur.com/U4mr2BB.jpg)
+
+In order to use the "material-dialogs" library, you will need to add in maven repository to your build.gradle file. Your gradle file should look [something like this](https://github.com/afollestad/impression/blob/master/app/build.gradle#L38-L47).
+
+## Sizing Dialogs
+
+### Runtime Dimensions
+
+In certain situations, you may want to set the height and width of the `DialogFragment` at runtime during creation. This can be done easily with `getDialog().getWindow()` as follows. In the XML simply set the root layout to `wrap_content` with:
+
+```xml
+<!-- fragment_edit_name.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/edit_name"
+    android:layout_width="wrap_content" android:layout_height="wrap_content" >
+  <!-- ...subviews here... -->
+</LinearLayout>
+```
+
+In the `DialogFragment` java source we can set the width and height `onResume` with:
+
+```java
+public void onResume() {
+    int width = getResources().getDimensionPixelSize(R.dimen.popup_width);
+    int height = getResources().getDimensionPixelSize(R.dimen.popup_height);        
+    getDialog().getWindow().setLayout(width, height);
+}
+```
+
+See [this stackoverflow post](http://stackoverflow.com/questions/12478520/how-to-set-dialogfragments-width-and-height) for more information.
+
+### Full-Screen Dialog
+
+In other cases, we want the dialog to fill the entire screen. First, in the XML layout for the dialog simply set the root layout to `match_parent` with:
+
+```xml
+<!-- fragment_edit_name.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/edit_name"
+    android:layout_width="wrap_content" android:layout_height="wrap_content" >
+  <!-- ...subviews here... -->
+</LinearLayout>
+```
+
+Next, within the `onResume` method of the `DialogFragment` we need to set the rules on the `getDialog().getWindow()` object to `WindowManager.LayoutParams.MATCH_PARENT` with:
+
+```
+@Override
+public void onResume() {
+    // Get existing layout params for the window
+    ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+    // Assign window properties to fill the parent
+    params.width = WindowManager.LayoutParams.MATCH_PARENT;
+    params.height = WindowManager.LayoutParams.MATCH_PARENT;
+    getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+    // Call super onResume after sizing
+    super.onResume();
+}
+```
+
+See [this stackoverflow post](http://stackoverflow.com/questions/27202382/android-dialog-fragment-width-keeps-on-matching-parent) for more details.
+
+## Specialized Dialog Types
 
 When using the `onCreateDialog` method there are many built-in Dialog types to take advantage of:
 
@@ -233,9 +406,45 @@ When using the `onCreateDialog` method there are many built-in Dialog types to t
 * [DatePickerDialog](http://developer.android.com/reference/android/app/DatePickerDialog.html) - Dialog that allows a user to select a date.
 * Other dialogs [not](http://developer.android.com/reference/android/text/method/CharacterPickerDialog.html) [worth](http://developer.android.com/reference/android/support/v7/app/MediaRouteChooserDialog.html) discussing here.
 
-## Libraries
+### Displaying a ProgressDialog
 
-* CodePath [android-view-helpers](https://github.com/codepath/android-view-helpers) for an easier way to create simple alert and progress modals.
+When running a long running background task, one easy way to notify users the app is loading is to display a [ProgressDialog](http://developer.android.com/intl/es/reference/android/app/ProgressDialog.html).
+
+<img src="http://i.imgur.com/apLzWt6.png" width="250" />
+
+A `ProgressDialog` can be created anytime with the following:
+
+```java
+ProgressDialog pd = new ProgressDialog(context);
+pd.setTitle("Loading...");
+pd.setMessage("Please wait.");
+pd.setCancelable(false);
+```
+
+The dialog can be displayed with:
+
+```java
+pd.show();
+```
+
+and hidden anytime with:
+
+```java
+pd.dismiss();
+```
+
+`ProgressDialog` can be safely paired with an [[AsyncTask|Creating-and-Executing-Async-Tasks]]. Refer to this [ProgressDialog tutorial](http://www.quicktips.in/show-progressdialog-android/) for a code sample. The dialog progress animation can be customized by supplying your own animation drawable [using this tutorial](http://islandofatlas.net/2014/03/29/android-custom-progress-dialog.html).
+
+Check out the CodePath [android-view-helpers](https://github.com/codepath/android-view-helpers) library for an easier way to create simple alert and progress modals.
+
+## Things To Note
+
+* Notice that we are using the support library version of fragments for better compatibility in our code samples. The non-support version works identically.
+* Dialogs are just classes that extend `DialogFragment` and define the view to display in the floating content area.
+* `DialogFragment` classes must define an empty constructor as shown in the code samples, otherwise the Android system will raise an exception when it attempts to instantiate the fragment.
+* After loading the initial view, the activity immediately shows the dialog using the show() method which allows the fragment manager to keep track of the state and gives us certain things for free such as the back button dismissing the fragment.
+* In the code snippets above, notice the use of `requestFocus` and input modes to control the appearance of the soft keyboard when the dialog appears.
+* We can dismiss a dialog one of two ways. Here we are calling `dismiss()` within the Dialog class itself. It could also be called from the Activity like the `show()` method.
 
 ## References
 

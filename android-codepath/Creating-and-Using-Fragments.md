@@ -1,5 +1,5 @@
-## Overview
-
+## Overview.
+    
 A fragment is a reusable class implementing a portion of an activity.  A Fragment typically defines a part of a user interface. Fragments must be embedded in activities; they cannot run independently of activities.
 
 ![Fragments](http://developer.android.com/images/fundamentals/fragments.png)
@@ -43,7 +43,7 @@ public class FooFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
       // Defines the xml file for the fragment
-      View view = inflater.inflate(R.layout.foo, container, false);
+      View view = inflater.inflate(R.layout.fragment_foo, container, false);
       // Setup handles to view objects here
       // etFoo = (EditText) view.findViewById(R.id.etFoo);
       return view;
@@ -85,6 +85,8 @@ To add the fragment **statically**, simply embed the fragment in the activity's 
 </LinearLayout>
 ```
 
+Note: You will likely need to change the path for FooFragment based on your project setup.
+
 #### Dynamically
 
 The second way is by adding the fragment **dynamically** in Java using the `FragmentManager`. The `FragmentManager` class and the [FragmentTransaction class](http://developer.android.com/reference/android/app/FragmentTransaction.html) allow you to add, remove and replace fragments in the layout of your activity at runtime.
@@ -100,6 +102,7 @@ In this case, you want to add a "placeholder" container (usually a `FrameLayout`
 
   <FrameLayout
        android:id="@+id/your_placeholder"
+       android:layout_width="match_parent"
        android:layout_height="match_parent">
   </FrameLayout>
 
@@ -122,7 +125,7 @@ If the fragment should always be within the activity, use XML to statically add 
 
 ### Fragment Lifecycle
 
-Fragment has many methods which can be overridden to plug into the lifecycle (**[similar to an Activity](http://developer.android.com/intl/es/guide/components/fragments.html#Lifecycle)**):
+Fragment has many methods which can be overridden to plug into the lifecycle (**[[similar to an Activity|Activity-Lifecycle]]**):
 
 - `onAttach()` is called when a fragment is connected to an activity.
 - `onCreate()` is called to do initial creation of the fragment.
@@ -194,7 +197,7 @@ public class SomeFragment extends Fragment {
 }
 ```
 
-[This chart](http://developer.android.com/images/fragment_lifecycle.png) has the lifecycle displayed visually.
+Refer to [this detailed lifecycle chart](http://developer.android.com/images/fragment_lifecycle.png) to view the lifecycle of a fragment more visually.
 
 ### Looking Up a Fragment Instance
 
@@ -211,7 +214,7 @@ Each method is outlined in more detail below.
 If the fragment was statically embedded in the XML within an activity and given an `android:id` such as `fragmentDemo` then we can lookup this fragment by id by calling `findFragmentById` on the `FragmentManager`:
 
 ```java
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -228,7 +231,7 @@ public class MainActivity extends FragmentActivity {
 If the fragment was dynamically added at runtime within an activity then we can lookup this fragment by tag by calling `findFragmentByTag` on the `FragmentManager`:
 
 ```java
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -326,7 +329,7 @@ public class DemoFragment extends Fragment {
 and then in the activity, get access to the fragment using the fragment manager and call the method:
 
 ```java
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -349,11 +352,12 @@ import android.support.v4.app.Fragment;
 public class MyListFragment extends Fragment {
   // ...
   // Define the listener of the interface type
-  // listener is the activity itself
+  // listener will the activity instance containing fragment
   private OnItemSelectedListener listener;
   
   // Define the events that the fragment will use to communicate
   public interface OnItemSelectedListener {
+    // This can be any number of events to be sent to the activity
     public void onRssItemSelected(String link);
   }
   
@@ -376,24 +380,27 @@ public class MyListFragment extends Fragment {
 }
 ```
 
-and then in the activity:
+and then in the activity we have to implement the `OnItemSelectedListener` listener:
 
 ```java
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 
-public class RssfeedActivity extends FragmentActivity implements
-  MyListFragment.OnItemSelectedListener {
+// Activity implements the fragment listener to handle events
+public class RssfeedActivity extends AppCompatActivity implements MyListFragment.OnItemSelectedListener {
+    // Can be any fragment, `DetailFragment` is just an example
     DetailFragment fragment;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-      super.onCreate(savedInstanceState);
-      setContentView(R.layout.activity_rssfeed);
-      fragment = (DetailFragment) getSupportFragmentManager()
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_rssfeed);
+        // Get access to the detail view fragment by id
+        fragment = (DetailFragment) getSupportFragmentManager()
             .findFragmentById(R.id.detailFragment);
   }
   
   // Now we can define the action to take in the activity when the fragment event fires
+  // This is implementing the `OnItemSelectedListener` interface methods
   @Override
   public void onRssItemSelected(String link) {
       if (fragment != null && fragment.isInLayout()) {
@@ -404,6 +411,21 @@ public class RssfeedActivity extends FragmentActivity implements
 ```
 
 in order to keep the fragment as re-usable as possible. For more details about this pattern, check out our detailed [[Creating Custom Listeners]] guide.
+
+### Understanding the FragmentManager
+
+The [FragmentManager](http://developer.android.com/intl/es/reference/android/support/v4/app/FragmentManager.html) is responsible for all runtime management of fragments including adding, removing, hiding, showing, or otherwise navigating between fragments. As shown above, the fragment manager is also responsible for finding fragments within an activity. Important available methods are outlined below:
+
+| Method                          | Description    |
+| -----------------------------   | ---------------------------------------------------------- |
+| `addOnBackStackChangedListener` | Add a new listener for changes to the fragment back stack. |
+| `beginTransaction()`            | Creates a new transaction to change fragments at runtime.   |
+| `findFragmentById(int id)`      | Finds a fragment by id usually inflated from activity XML layout.   |
+| `findFragmentByTag(String tag)` | Finds a fragment by tag usually for a runtime added fragment.       |
+| `popBackStack()`                | Remove a fragment from the backstack.                               |
+| `executePendingTransactions()`  | Forces committed transactions to be applied.                        |
+
+See the [official documentation](http://developer.android.com/intl/es/reference/android/support/v4/app/FragmentManager.html) for more information. You can also review the [FragmentTransaction](http://developer.android.com/intl/es/reference/android/app/FragmentTransaction.html) to take a closer look at what modifications can be made at run-time through the manager.
 
 ### ActionBar Menu Items and Fragments
 
@@ -565,8 +587,7 @@ public class ParentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
         Bundle savedInstanceState) {
-      View view = (View) inflater.inflate(R.layout.fragment_parent, container, false);
-      return view;
+       return inflater.inflate(R.layout.fragment_parent, container, false);
    }
 }
 
@@ -576,8 +597,7 @@ public class ChildFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
         Bundle savedInstanceState) {
        // Need to define the child fragment layout
-       View view = (View) inflater.inflate(R.layout.fragment_child, container, false);
-       return view;
+       return inflater.inflate(R.layout.fragment_child, container, false);
    }
 }
 ```
@@ -590,16 +610,22 @@ public class ParentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
         Bundle savedInstanceState) {
-      View view = (View) inflater.inflate(R.layout.fragment_parent, container, false);
-      insertNestedFragment();
-      return view;
-   }
+        return inflater.inflate(R.layout.fragment_parent, container, false);
+    }
+
+   // This event is triggered soon after onCreateView().
+   // onViewCreated() is only called if the view returned from onCreateView() is non-null.
+   // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        insertNestedFragment();
+    }
   
    // Embeds the child fragment dynamically
    private void insertNestedFragment() {
-      Fragment childFragment = new ChildFragment();
-      FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-      transaction.replace(R.id.child_fragment_container, childFragment).commit();
+       Fragment childFragment = new ChildFragment();
+       FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+       transaction.replace(R.id.child_fragment_container, childFragment).commit();
    }
 }
 ```

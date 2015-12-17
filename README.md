@@ -1,1 +1,1 @@
-Writing Things Down to Clear My Head
+Press `t` to get started

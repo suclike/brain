@@ -1,5 +1,25 @@
-# README
 Collection of links for every Android developer
+
+# Summary
+
+|         Title        | URL                                                                  |
+|:--------------------:|----------------------------------------------------------------------|
+|     (DA) Training    | http://developer.android.com/training/index.html                     |
+|    (DA) API guides   | http://developer.android.com/guide/index.html                        |
+| (DA) Reference       | http://developer.android.com/reference/packages.html                 |
+|      (DA) Tools      | http://developer.android.com/sdk/index.html                          |
+|    (DA) Distribute   | http://developer.android.com/distribute/index.html                   |
+|       (DA) blog      | http://android-developers.blogspot.de/                               |
+|    Android Samples   | https://github.com/googlesamples?utf8=%E2%9C%93&query=android        |
+|    Material Design   | https://www.google.com/design/spec/material-design/introduction.html |
+|    Material Icons    | https://www.google.com/design/icons/index.html                       |
+|     Awesome Java     | https://github.com/akullpp/awesome-java                              |
+|   Android Libraries  | https://github.com/wasabeef/awesome-android-libraries                |
+| Android UI Libraries | https://github.com/wasabeef/awesome-android-ui                       |
+|                      |                                                                      |
+
+
+# Complete collection
 
 ## dev.android.com
 - [developer.android.com](http://developer.android.com/index.html)

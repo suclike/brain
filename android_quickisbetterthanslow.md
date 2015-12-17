@@ -13,7 +13,7 @@ Give Android Studio more RAM
 
 You have plenty of RAM and little time, so waste ram, not your time
 
-Create a file called `studio.vmoptions` in a directory like `$HOME/Library/Preferences/AndroidStudio{VERSION}`
+Create a file called `studio.vmoptions` in a directory like `$HOME/Library/Preferences/AndroidStudio{VERSION}` on OSX or `$HOME/.AndroidStudio{VERSION}` on Linux
 
 Here is an example
 
@@ -32,7 +32,21 @@ Here is an example
 
 Reference: https://sites.google.com/a/android.com/tools/tech-docs/configuration
 
+
+Gradle incremental builds and server mode
+========
+
+
+Make sure you have those options enabled in `$HOME/.gradle/gradle.properties`
  
+ 
+```
+org.gradle.daemon=true
+org.gradle.parallel=true
+```
+
+References: https://docs.gradle.org/current/userguide/build_environment.html
+
  
 Set minSdkVersion to Lolipop for your debug builds
 ========
@@ -74,21 +88,11 @@ android {
 }
 ```
  
-This can speed up your build from 40s to 10s (smile)
+This allowed me to decrease my build time from 40s to 10s (smile)
 
  
  
-Gradle incremental builds and server mode
-========
 
-
-Make sure you have those options enabled in `$HOME/.gradle/gradle.properties`
- 
- 
-```
-org.gradle.daemon=true
-org.gradle.parallel=true
-```
 
  
 Use an emulator

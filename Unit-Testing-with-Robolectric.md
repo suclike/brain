@@ -1,8 +1,8 @@
 # Overview
 
-Robolectric is a unit testing framework that allows Android applications to be tested on the JVM (no emulator or device needed!). If you've ever tried to run Android tests on the JVM without Robolectric, you probably ran into an exception similar to `java.lang.RuntimeException: Method getWindow in android.app.Activity not mocked...` This is because the `android.jar` that your code is compiled against only contains stub implementations of the Android classes. The actual implementations only exist when running on a device or emulator. 
+Robolectric is a unit testing framework that allows Android applications to be tested on the JVM without an emulator or device.  Running Android tests on the JVM usually fails because the Android core libraries included with the SDK, specifically the `android.jar` file, only contain stub implementations of the Android classes.  The actual implementations of the core libraries are built directly on the device or emulator, so running tests usually requires one to be active in order to execute.
 
-So for all of us that want faster executing tests on the JVM (either for our Continuous Integration Server or just for faster iteration during development), Robolectric saves the day. Robolectric provides implementations of the Android SDK by rewriting the Android classes as they are being loaded (replacing the stubs for "actual" implementations). This gives us the ability to execute our tests on the JVM and achieve must faster test execution times than if we were running on a device or emulator.
+So for all of us that want faster executing tests on the JVM, Robolectric saves the day. Robolectric provides implementations of the Android SDK by rewriting the Android core libraries using [[shadow classes|Unit-Testing-with-Robolectric#using-shadows]]. This gives us the ability to execute our tests on the JVM and achieve must faster test execution times than if we were running on a device or emulator.
  
 ## Setup
 
@@ -13,7 +13,7 @@ Recent versions of Android Studio have made setup much easier. We'll walk throug
 * Android Gradle Plugin 1.2.3+
 * Gradle 2.2.1+
 
-Note: Robolectric can also be configured with Android Studio 1.1, but the setup requires the [robolectric gradle plugin](https://github.com/robolectric/robolectric-gradle-plugin/) and some additional configuration. Keep in mind that unit testing was still considered an [experimental feature](http://tools.android.com/tech-docs/unit-testing-support) in Android Studio 1.1.
+Note: Robolectric can also be configured with Android Studio 1.1, but the setup required the [robolectric gradle plugin](https://github.com/robolectric/robolectric-gradle-plugin/) and some additional configuration.  Unit testing in Android Studio has been supported since v1.2, so it is highly recommended you upgrade to a newer version to use Roboelectric.
 
 ### Android Studio Configuration
 1. The first thing we should do is change to the `Project` perspective in the `Project Window`. This will show us a full view of everything contained in the project. The default setting (the `Android` perspective) hides certain directories (including the unit tests!):
@@ -32,6 +32,7 @@ Note: Robolectric can also be configured with Android Studio 1.1, but the setup 
 
     <img src="http://robolectric.org/images/android-studio-configure-defaults-4bf48402.png">
 
+   If you forget to add this statement, you may see error messages such as `java.io.FileNotFoundException: build/intermediates/bundles/debug/AndroidManifest.xml (No such file or directory)`.
 5. Then, we just need to pull in Robolectric to our **_app_** build.gradle.
 
 ```gradle
@@ -115,7 +116,11 @@ There are 2 ways to run your tests:
 
 ## Using Shadows
 
-Robolectric has an important concept called shadows. Shadows are classes that modify or extend the behavior of classes in the Android SDK. When an Android class is instantiated, Robolectric first looks to see if it has a corresponding shadow class implementation (i.e. a ShadowTextView for a TextView), and if it finds one it creates a shadow object to associate with the Android class. Every time a method is invoked on the Android class, Robolectric first invokes the shadow class' corresponding method (if there is one). This gives the shadow classes a chance to maintain and expose extra state that wouldn't be available from just the Android classes. 
+Robolectric has an important concept called shadows. Shadows are classes that modify or extend the behavior of classes in the Android SDK.   Most of the Android core views are built with shadow classes to avoid needing the device or an emulator to run.  For a list of all the components that are implicitly mocked when using Roboelectric, see [this link](https://github.com/robolectric/robolectric/tree/master/robolectric-shadows/shadows-core/src/main/java/org/robolectric/shadows).  You can read more about Robolectric's shadows [here](http://robolectric.org/extending/).  
+
+When an Android class is instantiated, Robolectric first looks to see if it has a corresponding shadow class implementation (i.e. a [ShadowTextView](https://github.com/robolectric/robolectric/blob/master/robolectric-shadows/shadows-core/src/main/java/org/robolectric/shadows/ShadowTextView.java) for a TextView), and if it finds one it creates a shadow object to associate with the Android class. Every time a method is invoked on the Android class, Robolectric first invokes the shadow class' corresponding method (if there is one). This gives the shadow classes a chance to maintain and expose extra state that wouldn't be available from just the Android classes. 
+
+### Checking navigation flows
 
 Let's assume our MainActivity has a `Button` that launches a `SecondActivity`. We'd like to validate that clicking on the button launches the correct activity with an automated test.  
 
@@ -144,8 +149,32 @@ public void secondActivityStartedOnClick() {
 }
 ```
 
-You can read more about Robolectric's shadows [here](http://robolectric.org/extending/). 
+### Custom Shadows
 
+The best way to understand how shadows work is to understand how one is implemented.  Let's use the Bitmap class as an example.  There is an equivalent [ShadowBitmap](https://github.com/robolectric/robolectric/blob/master/robolectric-shadows/shadows-core/src/main/java/org/robolectric/shadows/ShadowBitmap.java) defined in Roboelectric.  Supposed we tried to create a Bitmap image using the `Bitmap.createBitmap`:
+
+```java
+  @RunWith(RobolectricGradleTestRunner.class)
+  @Config(constants=BuildConfig.class)
+  @Test
+  public void testBitmapScaling() {
+       Bitmap bitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
+```
+
+Instead of calling the [actual implementation](https://github.com/android/platform_frameworks_base/blob/master/graphics/java/android/graphics/Bitmap.java#L661-L744), ShadowBitmap's [createBitmap()](https://github.com/robolectric/robolectric/blob/master/robolectric-shadows/shadows-core/src/main/java/org/robolectric/shadows/ShadowBitmap.java#L189-L206) is called instead.  By doing so, the normal routines that depend on Canvas painting are not performed.  
+
+### Other Shadow packages
+
+While Roboelectric provides a base set of shadow classes, there are others that need to be explicitly defined if any of your unit tests depend on them to run.
+
+|Package                             | Shadow equivalent   
+|------------------------------------|-------------------------------------
+|com.android.support.support-v4      |org.robolectric:shadows-support-v4   
+|com.android.support.multidex        |org.robolectric:shadows-multidex     
+|com.google.android.gms:play-services|org.robolectric:shadows-play-services
+|com.google.android.maps:maps	     |org.robolectric:shadows-maps         
+|org.apache.httpcomponents:httpclient|org.robolectric:shadows-httpclient 
+  
 ## Testing the Activity Lifecycle
 
 Dealing with the activity lifecycle is a common source of bugs in Android. Fortunately, Robolectric allows you to test the activity lifecycle. Below you'll see how we've added some activity lifecycle tests to our `MainActivityTest` class.
@@ -265,6 +294,10 @@ public void localizedFrenchHelloWorld() {
 
 You can read more about Robolectric's support for qualified resources [here](http://robolectric.org/using-qualifiers/).
 
+## Limitations
+
+Roboelectric 3.0 currently does not have the ability to support loading of native libraries when executing tests (noted as an [issue](https://github.com/robolectric/robolectric/issues/1516)).
+
 ## References
 
 * <http://robolectric.org>
@@ -273,3 +306,5 @@ You can read more about Robolectric's support for qualified resources [here](htt
 * <https://github.com/mutexkid/android-studio-robolectric-example>
 * <http://blog.nikhaldimann.com/2013/10/10/robolectric-2-2-some-pages-from-the-missing-manual>
 * <https://corner.squareup.com/2013/04/the-resurrection-of-testing-for-android.html>
+* <http://simpleprogrammer.com/2010/07/27/the-best-way-to-unit-test-in-android/>
+* <https://youtu.be/f7ihSQ44WO0?t=15m11s>

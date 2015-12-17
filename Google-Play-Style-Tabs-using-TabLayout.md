@@ -1,6 +1,6 @@
 Tabs are now best implemented by leveraging the [[ViewPager|ViewPager-with-FragmentPagerAdapter]] with a custom "tab indicator" on top. In this guide, we will be using Google's new [TabLayout](https://developer.android.com/reference/android/support/design/widget/TabLayout.html) included in the support design library release for Android "M".
 
-Prior to Android "M", the easiest way to setup tabs with Fragments was to use ActionBar Tabs as described in [ActionBar Tabs with Fragments](http://guides.codepath.com/android/ActionBar-Tabs-with-Fragments) guide. However, all methods related to navigation modes in the ActionBar class (such as `setNavigationMode()`, `addTab()`, `selectTab()`, etc.) are now deprecated.
+Prior to Android "M", the easiest way to setup tabs with Fragments was to use ActionBar Tabs as described in [[ActionBar Tabs with Fragments|ActionBar-Tabs-with-Fragments]] guide. However, all methods related to navigation modes in the ActionBar class (such as `setNavigationMode()`, `addTab()`, `selectTab()`, etc.) are now deprecated.
 
 ### Design Support Library
 
@@ -123,7 +123,7 @@ Finally, we need to attach our `ViewPager` to the `SampleFragmentPagerAdapter` a
 * Set the `ViewPager` on the `TabLayout` to connect the pager with the tabs.
 
 ```java
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -205,7 +205,13 @@ private int[] imageResId = {
 public CharSequence getPageTitle(int position) {
     // Generate title based on item position
     // return tabTitles[position];
-    Drawable image = context.getResources().getDrawable(imageResId[position]);
+    
+    // getDrawable(int i) is deprecated, use getDrawable(int i, Theme theme) for min SDK >=21
+    // or ContextCompat.getDrawable(Context context, int id) if you want support for older versions.
+    // Drawable image = context.getResources().getDrawable(iconIds[position], context.getTheme());
+    // Drawable image = context.getResources().getDrawable(imageResId[position]);
+
+    Drawable image = ContextCompat.getDrawable(context, imageResId[position]);
     image.setBounds(0, 0, image.getIntrinsicWidth(), image.getIntrinsicHeight());
     SpannableString sb = new SpannableString(" ");
     ImageSpan imageSpan = new ImageSpan(image, ImageSpan.ALIGN_BOTTOM);
@@ -257,7 +263,7 @@ Note the additional spaces that are added before the tab title while instantiati
 In certain cases, instead of the default tab view we may want to apply a custom XML layout for each tab. To achieve this, iterate over all the `TabLayout.Tab`s after attaching the sliding tabs to the pager:
 
 ```java
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -333,7 +339,7 @@ Next, we can save and restore the last known tab position by implementing method
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        viewPager.setCurrentItem(savedInstanceState.getInt(POSITION);
+        viewPager.setCurrentItem(savedInstanceState.getInt(POSITION));
     }
 ```
 

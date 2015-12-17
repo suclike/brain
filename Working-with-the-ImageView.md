@@ -21,19 +21,32 @@ The ImageView handles all the loading and scaling of the image for you. Note the
 
 ### Sizing ImageView Controls
 
-By default, contents of an ImageView control are of a certain size -- usually the size of the image dimensions. They can also be bounded by their layout_width and layout_height attributes: 
+By default, contents of an ImageView control are of a certain size -- usually the size of the image dimensions. They can also be bounded by their layout_width and layout_height attributes:  
 
 ```xml
 <ImageView
     android:layout_width="50dp"
     android:layout_height="50dp"
     android:scaleType="fitXY"
+    ...
+/>
+```
+
+The `scaleType` above has been set to `fitXY` which sets the height and the width up or down to fit the maximum dimensions specified. 
+
+Fixing the width and height however means that the proportions of the width and height of the original image, known as the aspect ratio, will be altered.  We can take advantage of the [adjustViewBounds](http://developer.android.com/reference/android/widget/ImageView.html#attr_android:adjustViewBounds) parameter to preserve this aspect ratio.  However, we must either allow the height and/or width to be adjustable (i.e. by using `maxWidth` and using `wrap_content` for the dimension).  Otherwise, the dimensions cannot be readjusted to meet the required aspect ratio.
+
+```xml
+<ImageView
+    android:layout_width="50dp"
+    android:layout_height="wrap_content"
+    android:scaleType="fitXY"
     android:adjustViewBounds="true"
     ...
 />
 ```
 
-In the above we are also  specifying that the ImageView preserve its aspect ratio using the [adjustViewBounds](http://developer.android.com/reference/android/widget/ImageView.html#attr_android:adjustViewBounds) attribute. The `scaleType` above has been set to `fitXY` which scales both the height and the width up or down until it fits within the maximum dimensions specified. By combining these properties together we can control the rough size of the image and still adjust the image according to the proper aspect ratio.
+By combining these properties together we can control the rough size of the image and still adjust the image according to the proper aspect ratio.
 
 We can also size an `ImageView` at runtime within our Java source code by modifying the `width` or `height` inside `getLayoutParams()` for the view: 
 
@@ -69,7 +82,7 @@ Bottom row (l-r): fitCenter, fitStart, fitEnd, fitXY.
 
 ### Supporting Multiple Densities
 
-Since Android has so many different screen sizes, resolutions and densities, there is a system for selecting the correct image asset for the correct device. There are specific drawable folders for each device density category including: ldpi (low), mdpi (medium), hdpi (high), and xhdpi (extra high). Notice that every app has folders for image drawables such as `drawable-mdpi` which is for "medium dots per inch". 
+Since Android has so many different screen sizes, resolutions and densities, there is a [[powerful system for selecting the correct image asset|Understanding-App-Resources#introducing-alternate-resources]] for the correct device. There are specific drawable folders for each device density category including: ldpi (low), mdpi (medium), hdpi (high), and xhdpi (extra high). Notice that every app has folders for image drawables such as `drawable-mdpi` which is for "medium dots per inch". 
 
 To create alternative bitmap drawables for different densities, you should follow the 3:4:6:8 scaling ratio between the four generalized densities. Refer to the chart below:
 
@@ -168,6 +181,8 @@ BitmapScaler.scaleToFitWidth(bitmap, screenWidth);
 
 Check out [this source](http://androidsnippets.wordpress.com/2012/10/25/how-to-scale-a-bitmap-as-per-device-width-and-height/) for more information on how to scale a bitmap based instead on relative device width and height.
 
+**Note**: Doing any type of scaling of images results in the loss of [EXIF](https://en.wikipedia.org/wiki/Exchangeable_image_file_format) metadata that includes info such as camera, rotation, date/time of the photo taken.  While there are [workarounds](https://bricolsoftconsulting.com/copying-exif-metadata-using-sanselan/) to transfer this data after the image has been copied, there are current limitations.   If you need this info or wish to upload it to some site, you should send the original file and not the downsampled version.
+
 ### Displaying SVG Images
 
 Using a third party library called [svg-android](https://code.google.com/p/svg-android/wiki/Tutorial) we can actually display resolution and density independent SVG images. 
@@ -190,3 +205,4 @@ See the [official tutorial](https://code.google.com/p/svg-android/wiki/Tutorial)
 * <http://developer.android.com/reference/android/widget/ImageView.html>
 * <http://developer.android.com/guide/practices/screens_support.html>
 * <https://code.google.com/p/svg-android/wiki/Tutorial>
+* <https://github.com/android/platform_frameworks_base/blob/master/core/java/android/widget/ImageView.java#L903-L907>

@@ -13,14 +13,12 @@ Let's setup Parse into a brand new Android app following the steps below.
 * Next, create an app in Parse and call it `SimpleChat`. Make note of the `Application ID` and `Client Key` values after you have done so.
 * Follow the the steps mentioned under the [[setup|Building-Data-driven-Apps-with-Parse#setup]] guide to create and setup your project. 
   * Open the [Parse Quickstart Android Guide](https://www.parse.com/apps/quickstart#parse_data/mobile/android/native/existing) for updated instructions.
-  * Download the latest [Parse jar files](https://parse.com/downloads/android/Parse/latest) in a zip file so we can add them to our project
-  * Unzip the jars and copy them each into your `app/libs` folder (see [this to find libs folder](http://stackoverflow.com/a/28020621/313399))
   * Add the following to your `app/build.gradle`:
     
     ```gradle
     dependencies {
       compile 'com.parse.bolts:bolts-android:1.+'
-      compile fileTree(dir: 'libs', include: 'Parse-*.jar')
+      compile 'com.parse:parse-android:1.+'
     }
     ```
   * Make sure you have added these lines before the `<application>` tag in your `AndroidManifest.xml`.
@@ -95,7 +93,7 @@ Let's create an XML layout which allows us to post messages by typing into a tex
 </RelativeLayout>
 ```
 
-The imeOptions attribute is used to control the icon in the [Soft Keyboard](https://guides.codepath.com/android/Working-with-the-Soft-Keyboard).  The gravity attribute will center the button vertically AND right horizontally.
+The imeOptions attribute is used to control the icon in the [[Soft Keyboard|Working-with-the-Soft-Keyboard]].  The gravity attribute will center the button vertically AND right horizontally.
 
 * Add the following values to `res-->values-->strings.xml` file.
 
@@ -503,7 +501,7 @@ Now, we should be able to see the messages in the list after posting but we won'
 
 ## 12. Refreshing Messages
 
-Finally, let's periodically refresh the ListView with latest messages [using a handler](http://guides.codepath.com/android/Repeating-Periodic-Tasks#handler). The handler will call a runnable to fetch new messages every 100ms. This is a primitive "polling" rather than "push" technique for loading new messages but will work for the purposes of this simple project.
+Finally, let's periodically refresh the ListView with latest messages [[using a handler|Repeating-Periodic-Tasks#handler]]. The handler will call a runnable to fetch new messages every 100ms. This is a primitive "polling" rather than "push" technique for loading new messages but will work for the purposes of this simple project.
 
 ```java
 ...
@@ -540,7 +538,7 @@ private void refreshMessages() {
 }
 ```
 
-See the [repeating periodic tasks](http://guides.codepath.com/android/Repeating-Periodic-Tasks#handler) guide to learn more about the handler.
+See the [[repeating periodic tasks|Repeating-Periodic-Tasks#handler]] guide to learn more about the handler.
 
 ## 13. SimpleChatManifest.xml
 

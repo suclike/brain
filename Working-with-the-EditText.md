@@ -123,6 +123,30 @@ which results in:
 
 ![Hints](https://i.imgur.com/b0kKM7g.png)
 
+### Changing the bottom line color
+
+<img src="http://imgur.com/XUWKoju.png"/>
+
+Assuming you are using the AppCompat library, you can override the styles `colorControlNormal`, `colorControlActivated`, and `colorControlHighlight`:
+
+```xml
+<style name="Theme.App.Base" parent="Theme.AppCompat.Light.DarkActionBar">
+    <item name="colorControlNormal">#d32f2f</item>
+    <item name="colorControlActivated">#ff5722</item>
+    <item name="colorControlHighlight">#f44336</item>
+</style>
+```
+
+If you do not see these styles applied within a DialogFragment, there is a [known bug](https://code.google.com/p/android/issues/detail?id=169760#c1) when using the LayoutInflater passed into the [onCreateView()](http://developer.android.com/reference/android/app/Fragment.html#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)) method. 
+
+The issue has already been fixed in the AppCompat v23 library.  See this [[guide|Migrating-to-the-AppCompat-Library#overview]] about how to upgrade. Another temporary workaround is to use the Activity's layout inflater instead of the one passed into the `onCreateView()` method:
+
+```java
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_fragment, container);
+  }
+```
+
 ### Listening for EditText Input
 
 Check out the [[basic event listeners|Basic-Event-Listeners#edittext-common-listeners]] cliffnotes for a look at how to listen for changes to an EditText and perform an action when those changes occur.
@@ -190,9 +214,48 @@ private void setupFloatingLabelError() {
 
 Here we use the `addTextChangedListener` to watch as the value changes to determine when to display the error message or revert to the hint.
 
+### Adding Character Counting
+
+`TextInputLayout` since the [announcement of support design library v23.1](http://android-developers.blogspot.com/2015/10/android-support-library-231.html?linkId=17977963) also can expose a  character counter for an `EditText` defined within it.  The counter will be rendered below the `EditText` and can change colors of both the line and character counter if the maximum number of characters has been exceeded:
+
+<img src="http://imgur.com/eEYwIO3.png"/>
+
+The `TextInputLayout` simply needs to define `app:counterEnabled` and `app:CounterMaxLength` in the XML attributes.  These settings can also be defined dynamically through `setCounterEnabled()` and `setCounterMaxLength()`:
+
+```xml
+<android.support.design.widget.TextInputLayout
+    android:layout_width="match_parent"
+    app:counterEnabled="true"
+    app:counterMaxLength="10"
+    app:counterTextAppearance="@style/counterText"
+    app:counterOverflowTextAppearance="@style/counterOverride">
+    <EditText
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:hint="Username"
+       android:layout_centerHorizontal="true"
+       android:layout_centerVertical="true"
+       android:ems="10"
+       android:hint="Username" />
+</android.support.design.widget.TextInputLayout>
+```
+
+The counter text and overflow text can also have their own text styles by defining `app:counterTextAppearance` and `app:counterOverflowTextAppearance`.  We can use `textColor`, `textSize`, and `fontFamily` to help change the color, size, or font:
+
+```xml
+<style name="counterText">
+  <item name="android:textColor">#aa5353cc</item>
+</style>
+
+<style name="counterOverride">
+  <item name="android:textColor">#ff0000</item>
+</style>
+```
+
 ### Providing Auto-complete
 
 Check out the [official text fields](http://developer.android.com/guide/topics/ui/controls/text.html#AutoComplete) guide for a step-by-step on how to setup autocomplete for the entry.
+
 
 ## References
 
@@ -201,3 +264,4 @@ Check out the [official text fields](http://developer.android.com/guide/topics/u
 * <http://www.codeofaninja.com/2012/01/android-edittext-example.html>
 * <http://www.tutorialspoint.com/android/android_edittext_control.htm>
 * <http://developer.android.com/reference/android/widget/EditText.html>
+* <http://android-developers.blogspot.com/2015/10/android-support-library-231.html?linkId=17977963>

@@ -3,12 +3,49 @@
 The [AppCompat](https://developer.android.com/tools/support-library/features.html#v7) support library enables the use of the ActionBar and Material Design specific implementations such as [Toolbar](https://developer.android.com/reference/android/support/v7/widget/Toolbar.html) for older devices down to Android v2.1.   Currently, new projects created through Android Studio incorporate this library by default.  You can confirm by looking at the `build.gradle` file to see the AppCompat library being set:
 
 ```gradle
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.0"
+}
+
 dependencies {
-    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.android.support:appcompat-v7:23.1.0'
 }
 ```
 
 Note that the AppCompat library has an implicit dependency on the support-v4 library.  The support-v4 declaration however does not necessarily need to be declared.
+
+Also notice that once you upgrade to AppCompat v7 v23, you will also be forced to update your Build Tools and `compileSDKVersion` to API 23 too.
+
+There is a current [bug](https://code.google.com/p/android/issues/detail?id=183149) that precludes you from compiling to lower versions.   Once you are using this API version 23 or higher, be aware that the Apache HTTP Client library has been [removed](https://developer.android.com/preview/behavior-changes.html#behavior-apache-http-client). Workarounds are discussed in this [[guide|Using-Android-Async-Http-Client#resolving-android-marshmallow-compatibility-issues]].
+
+#### Using AppCompat v22 or lower
+ 
+If you need to wish to downgrade from API 23, you need to follow more steps besides simply uninstalling the SDK as documented in this [bug report](https://code.google.com/p/android/issues/detail?id=183149#c7):
+
+1. Remove the Build Tools 23 from the SDK Manager.
+2. Find the appcompat-v7 SDK folder and delete the entire 23.0.0.0 folder.
+
+   Mac OS users:    
+   `/Users/[username]/Library/Android/sdk/extras/android/m2repository/com/android/support/appcompat-v7`
+
+   PC users: 
+   `C:\Documents and Settings\<user>\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\appcompat-v7`
+3. Inside this same folder edit `maven-metadata.xml` and delete the one line `<version>23.0.0</version>`:
+<img src="https://imgur.com/JoXN8nH.png">
+4. Downgrade the Build Tools and AppCompat Library in `app/build.gradle`:
+  ```gradle
+  android {
+      compileSdkVersion 22
+      buildToolsVersion "22.2.1"
+  }
+
+  dependencies {
+      compile 'com.android.support:appcompat-v7:22.2.1'
+  }
+  ```
+5. Clean the project and rebuild.
+
 
 ## Search and replacing changes
 
@@ -104,7 +141,7 @@ In addition, setting the `targetSdkVersion` to the latest SDK version ensures th
 
 ```gradle
 android {
-    targetSdkVersion 21
+    targetSdkVersion 23
 ```
 
 ### Known issues

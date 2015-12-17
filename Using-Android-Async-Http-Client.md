@@ -4,67 +4,32 @@ A popular third-party library called [android-async-http](http://loopj.com/andro
 
 ### Setup
 
-We simply need to add the library to our `app/build.gradle` file:
+Add this library to our `app/build.gradle` file:
 
 ```gradle
 dependencies {
-  compile 'com.loopj.android:android-async-http:1.4.8'
+  compile 'com.loopj.android:android-async-http:1.4.9'
 }
 ```
 
-#### Resolving Android Marshmallow Compatibility Issues
-
-##### Option 1: rely on the `useLibrary` Gradle command
-
-Apache HTTP client (a dependency of [android-async-http](http://loopj.com/android-async-http/)) has been [removed from Marshmallow](http://developer.android.com/preview/behavior-changes.html#behavior-apache-http-client). If your app targets API 23, you'll need to add the following to your gradle file until the [library is updated](https://github.com/loopj/android-async-http/issues/830):
-
-  ```gradle
-  android {
-      compileSdkVersion 23
-      useLibrary 'org.apache.http.legacy'   // required if compileSdkVersion >= 23
-  }
-  ```
-
-You may also need to add the import statement manually to your Java file wherever you make network calls with this library:
+If you are upgrading from previous versions, you need to change these import statements for the `Header` class from:
 
 ```java
 import org.apache.http.Header;
 ```
 
-The reason is that is a current bug in Android Studio 1.3.1 where it may not recognized this added library.  You will notice that Android Studio will not recognized the module:
-
-  <img src="https://i.imgur.com/jreDUla.png"/>
-
-Assuming you have included the `useLibrary` statement, your build should however compile successfully.  The Gradle configuration will add this library to the Java classpath, but the IDE currently has a bug where it is not recognized as an added dependency.
-
-##### Option #2: add the Apache Http library manually
-
-You can copy the `org.apache.http.legacy.jar` file to the `libs/` dir of your app.  This JAR is included with Android 23 in the respective locations:
-
-Mac OS users: `/Users/[username]/Library/Android/sdk/platforms/android-23/optional`
-
-PC users: `C:\Documents and Settings\<user>\AppData\Local\Android\sdk\platforms\android-23\optional`
-
-Copy this JAR file to your `app/libs` dir.  Make sure to `Mark as Library` if the file does not get expanded.  You should see something similar to the following screenshot if the library was added correctly:
-
-<img src="http://i.imgur.com/AtvF9Vm.png">
-
-#### Fixing issues with Garbled JSON Response
-
-If you are noticing garbled data in the responses, it's likely that you have encountered a bug in the Android Async HTTP Client library:
-
-<img src="https://cloud.githubusercontent.com/assets/126405/5264140/d878ea00-7a40-11e4-867f-6515814861a0.png"/>
-
-The current workaround is to disable Gzip compression as described in this [GitHub comment](https://github.com/loopj/android-async-http/issues/932#issuecomment-134549073):
+Replaced with this line:
 
 ```java
-httpClient.addHeader("Accept-Encoding", "identity"); // disable gzip
+import cz.msebera.android.httpclient.Header;
 ```
 
-You can also downgrade to an earlier version of the library:
+If you have any other import statements that start with `org.apache.http`, you also need to change them to `cz.msebera.android.httpclient`.
 
-```gradle
-compile 'com.loopj.android:android-async-http:1.4.4'
+Mac users can use the following shortcut:
+```bash
+brew install gnu-sed
+find . -name '*.java' -exec gsed -i 's/org.apache.http/cz.msebera.android.httpclient/g' \{\} +
 ```
 
 ### Sending a Network Request
@@ -73,7 +38,7 @@ Now, we just create an `AsyncHttpClient`, and then execute a request specifying 
 
 ```java
 import com.loopj.android.http.*;
-import org.apache.http.Header;
+import cz.msebera.android.httpclient.Header;
 
 AsyncHttpClient client = new AsyncHttpClient();
 RequestParams params = new RequestParams();
@@ -119,7 +84,23 @@ client.get(url, params, new JsonHttpResponseHandler() {
 });
 ```
 
-The request will be sent out with the appropriate parameters passed in the query string and then the response will be parsed as JSON and made available within `onSuccess`. Check the [[Converting JSON to Models]] guide for more details on parsing a JSON response.
+Assuming the callback uses `JsonHttpResponseHandler`, the request will be sent out with the appropriate parameters passed in the query string and then the response can be parsed as JSON and made available within `onSuccess`. Check the [[Converting JSON to Models]] guide for more details on parsing a JSON response manually.
+
+#### Decoding with GSON library
+
+If you wish to convert the JSON model directly to a Java object that corresponds directly to the field names, you can use a `TextHttpResponseHandler` instead of a `JsonhttpResponseHandler` and follow the [[Leveraging the Gson Library]] guide.  This approach works also for nested JSON objects too.
+
+```java
+client.get(url, params, new TextHttpResponseHandler() {
+
+    @Override
+    public void onSuccess(int statusCode, Header[] headers, String r
+        Gson gson = new GsonBuilder().create();
+        // Define Response class to correspond to the JSON response returned
+        gson.fromJson(responseString, Response.class);
+    }
+});
+```
 
 #### Sending an Authenticated API Request
 

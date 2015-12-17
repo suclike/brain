@@ -13,13 +13,9 @@ To setup your genymotion emulator [sign up](https://cloud.genymotion.com/page/cu
   * Windows: Run the MSI installer
   * Mac: Open the dmg and drag both apps to Applications directory
 5. Go to the Genymotion ADB settings and set the path to your SDK directory (i.e. for Mac OSX, the directory is `/Users/[username]/Library/Android/sdk`.  For Windows, all SDK files should be by default in `C:\Documents and Settings\<user>\AppData\Local\Android\sdk`)
-
    ![image](https://i.imgur.com/iGqP85B.png)
-
 6. (PC's only) You need to reboot and enable Intel Virtualization Technology or Intel VT-x on the BIOS.   Typically you need to reboot and hit `F1`, `Esc`, or `F10` to enter this mode.  See these [instructions](http://www.sysprobs.com/disable-enable-virtualization-technology-bios) for more information.
-
    <img src="http://cdn.sysprobs.com/wp-content/uploads/2009/10/virt_bios.gif"> 
-
 7. Install the Genymotion plugin for Android Studio.  Go to `Preferences`->`Plugins` and click Browse repositories. Search for Genymotion and you should find one provided by http://www.genymotion.com.
 
   ![https://i.imgur.com/AIY7gOS.gif](https://i.imgur.com/AIY7gOS.gif | width=100%)
@@ -68,6 +64,8 @@ To setup your genymotion emulator [sign up](https://cloud.genymotion.com/page/cu
 6. **Android 5.0.0 only:** If you are using Android 5.0.0, you will be prompted to update to the latest version of Google+ app.  In addition, make sure to upgrade to at least Genymotion 2.4.0 (there appears to be issues with Genymotion 2.3.1).
 
 7. Make sure to update to the latest version of Google Play Services by opening the "Play Store" app and then the "Maps" app to verify play services is running correctly.
+
+**Note:** After installed google play if you have got problem like no connection, you need to be carefull to install right version that will match emulator version. For example Android 4.3 is API 18. If you install Samsung Galaxy S4 API 18 - 1080 x 1920 for genymotion emulator and install Google Services APK for Android 4.3, google play will work without any issue. The important point is google play API version and genymotion emulator device version.
 
 ### Enable GPS on Emulator
 

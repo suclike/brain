@@ -77,7 +77,7 @@ Check the [CameraUpdateFactory](http://developer.android.com/reference/com/googl
 We can add a marker to the map with the following code specifying the position (`LatLng`), icon (`BitmapDescriptor`), title, and snippet:
 
 ```java
-// Use green marker icon
+// Set the color of the marker to green
 BitmapDescriptor defaultMarker =
     BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
 // listingPosition is a LatLng point
@@ -89,6 +89,30 @@ Marker mapMarker = mapFragment.addMarker(new MarkerOptions()
     .snippet("Some description here")
     .icon(defaultMarker));
 ```
+
+#### Attaching Click Handler to Markers
+
+We can attach a click handler to a marker once the map is loaded with:
+
+```java
+protected void loadMap(GoogleMap googleMap) {
+    if (googleMap != null) {
+        // Attach marker click listener to the map here
+        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            public boolean onMarkerClick(Marker marker) {
+                 // Handle marker click here
+            }
+        });
+        // ...
+    }
+}
+```
+
+#### Associating Markers to Models
+
+Markers have limited information and associating a marker to the underlying data model can be difficult without creating an associated hash map to track the mappings between a marker's id and the associated data model. Refer to [this stackoverflow post](http://stackoverflow.com/a/13750858) for specifics.
+
+#### Custom Marker Drawables
 
 We can also use custom markers based on any arbitrary drawable with:
 
@@ -157,7 +181,7 @@ First, we need to create a new xml file in `res/layout/message_item.xml` which w
 If we want to setup a long click listener, we need to implement the `OnMapLongClickListener` in our Activity and setup the listener for the map:
 
 ```java
-public class MapDemoActivity extends FragmentActivity implements
+public class MapDemoActivity extends AppCompatActivity implements
   GoogleApiClient.ConnectionCallbacks,
   GoogleApiClient.OnConnectionFailedListener,
   LocationListener,
@@ -290,7 +314,7 @@ To implement the falling pin animation, add a marker to the desired position in 
     }
 ```
 
-Review the [repeating periodic tasks guide](http://guides.codepath.com/android/Repeating-Periodic-Tasks#handler) for a better understanding of the `Handler` pattern used above to animate the marker over time.
+Review the [[repeating periodic tasks guide|Repeating-Periodic-Tasks#handler]] for a better understanding of the `Handler` pattern used above to animate the marker over time.
 
 Next, in `private void showAlertDialogForPoint` add the call to `dropPinEffect(marker);` at the end to animate the placement of the marker:
 
@@ -404,6 +428,7 @@ If you are loading remote images into an InfoWindow, there is a common problem w
 ####  Customizing the InfoWindow Frame
 
 When creating a custom information window on the map, the developer can choose to override either `getInfoContents` (as shown above) which allows you to customize **just the contents of the window** but still keep the default info window frame and background. If instead the desired behavior is to provide a view that will be used for the entire info window, we need to override `getInfoWindow` instead of `getInfoContents`. Note that **only one of these can be overridden** for a particular adapter. See further discussion [in this stackoverflow post](http://stackoverflow.com/a/18227721), [this infowindow tutorial](http://bon-app-etit.blogspot.com/2012/12/using-infowindowadapter-part-2.html) or [on the official google docs](https://developers.google.com/maps/documentation/android/infowindows#custom_info_windows). 
+
 
 ### Drawing Shapes on the Map
 

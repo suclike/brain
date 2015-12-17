@@ -8,14 +8,14 @@ Add the following line to your Gradle configuration:
 
 ```gradle
 dependencies {
-  compile 'com.google.code.gson:gson:2.3'
+  compile 'com.google.code.gson:gson:2.4'
 }
 ```
 
 ### Usage
 
 You can auto-generate many of your code as described in [[this guide|Consuming-APIs-with-Retrofit#auto-generating-the-java-objects]], but for now, we'll walk through how you can do so manually.
-First, we need to know what type of JSON response we will be receiving.    Let's use the [Rotten Tomatoes API](http://developer.rottentomatoes.com/docs) as an example and show how to create Java objects that will be able to parse the latest [box office movies](http://developer.rottentomatoes.com/docs/read/json/v10/Box_Office_Movies).  Based on the JSON response returned for this API call, let's first define how a basic movie representation should look like:
+First, we need to know what type of JSON response we will be receiving.    The following example uses the [Rotten Tomatoes API](http://developer.rottentomatoes.com/docs) as an example and show how to create Java objects that will be able to parse the latest [box office movies](http://developer.rottentomatoes.com/docs/read/json/v10/Box_Office_Movies).  Based on the JSON response returned for this API call, let's first define how a basic movie representation should look like:
 
 ```java
 
@@ -58,6 +58,8 @@ movies: [
 ]
 ```
 
+### Initializing collections
+
 Because the API returns a list of movies and not just an individual one, we also need to create a class that will map the `movies` key to a list of Movie objects.
 
 ```java
@@ -66,12 +68,12 @@ public class BoxOfficeMovieResponse {
     List<Movie> movies;
 
     // public constructor is necessary for collections
-    public Movies() {
+    public BoxOfficeMovieResponse() {
         movies = new ArrayList<Movie>();
     }
 ```
 
-Note below that a public constructor is needed to initialize the list.  Without this constructor, the Gson library will be unable to parse the response correctly for collection types.
+Note below that a public constructor may be needed to initialize the list.  To avoid null pointer exceptions that may result from trying to get back the movie lists, it is highly recommended to initialize these objects in the empty constructor.
 
 ### Parsing the response
 
@@ -187,6 +189,7 @@ Gson gson = gsonBuilder.create();
 ```
 
 Similarly, the date format could also be used for parsing standard ISO format time directly into a Date object:
+
 ```java
 public String ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
 GsonBuilder gsonBuilder = new GsonBuilder();
@@ -194,18 +197,7 @@ gsonBuilder.setDateFormat(ISO_FORMAT);
 Gson gson = gsonBuilder.create();
 ```
 
-To enable the library to build a map what keys in the JSON data should match your internal variables, you can add annotations to provide the actual corresponding JSON name.  An example of a previously defined Java model using the based on GitHub's [User](https://developer.github.com/v3/users/) model is shown below.  Note how the `@SerializedName` annotation is used.
-
-```java
-@SerializedName("login")
-private String mLogin;
-
-@SerializedName("id")
-private Integer mId;
-
-@SerializedName("avatarUrl")
-private String mAvatarUrl;
-```
+In the event that Date fields need to mapped depending on the format, you are likely to need to need to use the custom deserializer approach described in the next section.
 
 #### Mapping custom Java types
 
@@ -238,6 +230,48 @@ gsonBuilder.registerTypeAdapter(Timestamp.class, new TimestampDeserializer());
 Gson Gson = gsonBuilder.create();
 ```
 
+#### Mapping multiple Date formats
+
+If an API uses different Date formats, then a custom type adapter can be used to make parsing more robust.  To use this approach, a default date policy should not be set by calling the method `setDateFormat()` as described in the [earlier section](#mapping-java-date-objects).  In addition, a custom deserializer should be registered and created:
+
+```java
+GsonBuilder gsonBuilder = new GsonBuilder();
+gsonBuilder.registerTypeAdapter(Date.class, new DateDeserializer());
+Gson Gson = gsonBuilder.create();
+```
+
+Leveraging the `DateUtils` class in the Apache Commons Language library, we can try multiple formats when attempting to parse a value to a Date field:
+
+Add this line to your Gradle file:
+
+```gradle
+    compile 'org.apache.commons:commons-lang3:3.3.2'
+```
+
+We can then use the [parseDate()](https://commons.apache.org/proper/commons-lang/javadocs/api-3.1/org/apache/commons/lang3/time/DateUtils.html#parseDate) method to try multiple date formats:
+
+```java
+final class DateAdapter implements JsonDeserializer<Date> {
+
+    DateAdapter() {
+    }
+
+    public static Date convertISO8601ToDate(String date) throws ParseException {
+        return DateUtils.parseDate(date, Locale.getDefault(),
+                DateFormatUtils.ISO_DATETIME_FORMAT.getPattern(),
+                DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.getPattern());
+    }
+
+    private Date deserializeToDate(JsonElement json) {
+        try {
+            return convertISO8601ToDate(json.getAsString());
+        } catch (ParseException e) {
+            throw new JsonSyntaxException(json.getAsString(), e);
+        }
+    }
+}
+```
+
 ### HTTP Client Libraries
 
 We can use any type of HTTP client library with Gson, such as Android Async HTTP Client or Square's OkHttp library.
@@ -252,13 +286,13 @@ AsyncHttpClient client = new AsyncHttpClient();
          "http://api.rottentomatoes.com/api/public/v1.0/lists/movies/box_office.json?apikey=" + apiKey,
          new TextHttpResponseHandler() {
              @Override
-             public void onFailure(int i, org.apache.http.Header[] headers, String s,
+             public void onFailure(int i, Header[] headers, String s,
                      Throwable throwable) {
 
              }
 
              @Override
-             public void onSuccess(int i, org.apache.http.Header[] headers, String s) {
+             public void onSuccess(int i, Header[] headers, String s) {
                  Response response = Response.fromJson(s);
              }
          });
@@ -270,14 +304,14 @@ AsyncHttpClient client = new AsyncHttpClient();
 }
 ```
 
-#### Retrofit
+#### Retrofit 2
 
 Retrofit uses [OkHttp](http://square.github.io/okhttp/) for the underlying networking library and relies on the Gson library by default for decoding on API-based responses.  To use it, we first need to define an interface file called `RottenTomatoesService.java`.  To ensure that the API call will be made asynchronously, we also define a callback interface.  Note that if this API call required other parameters, we should always make sure that the `Callback` declaration is last.
     
 ```java
  public interface RottenTomatoesService {
         @GET("/lists/movies/box_office.json")
-        public void listRepos(Callback<BoxOfficeMovieResponse> responseCallback);
+        public Call<BoxOfficeMovieResponse> listRepos();
     }
 ```
 
@@ -294,11 +328,15 @@ RequestInterceptor requestInterceptor = new RequestInterceptor() {
 };
 ```
 
-Next, we need to create a `RestAdapter` and making sure to associate the adapter to this `RequestInterceptor`:
+Next, we need to create a `Retrofit` instance and making sure to associate the adapter to this `RequestInterceptor`:
 
 ```java 
-RestAdapter restAdapter = new RestAdapter.Builder()
-               .setRequestInterceptor(requestInterceptor)
+// Add the interceptor to OkHttpClient 
+OkHttpClient client = new OkHttpClient();
+client.interceptors().add(requestInterceptor);
+
+Retrofit retrofit = new Retrofit.Builder()
+               .client(client)
                .setEndpoint("http://api.rottentomatoes.com/api/public/v1.0")
                .build();
 ```
@@ -306,16 +344,18 @@ RestAdapter restAdapter = new RestAdapter.Builder()
 We then simply need to create a service class that will enable us to make API calls:
 
 ```java
-RottenTomatoesService service = restAdapter.create(RottenTomatoesService.class);
+RottenTomatoesService service = retrofit.create(RottenTomatoesService.class);
 
-service.listRepos(new Callback<BoxOfficeMovies>() {
+Call<BoxOfficeMovieResponse> call = service.listRepos();
+call.enqueue(new Callback<BoxOfficeMovieResponse>() {
             @Override
-            public void success(BoxOfficeMovies boxOfficeMovies, Response response) {
+            public void onResponse(Response response) {
                 // handle response here
+                BoxOfficeMovieResponse boxOfficeMovieResponse = response.body();
             }
 
             @Override
-            public void failure(RetrofitError error) {
+            public void onFailure(Throwable t) {
 
             }
         });

@@ -8,15 +8,25 @@ This "standard pack" listed below are libraries that are quite popular, widely a
 
 | Name            | Description                                                 |  
 | ----            | ------------                                                |
-| [Retrofit](http://square.github.io/retrofit/) | A type-safe REST client for Android which intelligently maps an API into a client interface using annotations.            |
-| [Picasso](http://square.github.io/picasso/) | A powerful image downloading and caching library for Android. |
-| [ButterKnife](http://jakewharton.github.io/butterknife/) | Using Java annotations, makes Android development better by simplifying common tasks. |
+| [[Retrofit|Consuming-APIs-with-Retrofit]] | A type-safe REST client for Android which intelligently maps an API into a client interface using annotations.            |
+| [[Picasso|Displaying-Images-with-the-Picasso-Library]] | A powerful image downloading and caching library for Android. |
+| [[ButterKnife|Reducing-View-Boilerplate-with-Butterknife]] | Using Java annotations, makes Android development better by simplifying common tasks. |
 | [Parceler](http://parceler.org/) | Android Parcelable made easy through code generation |
 | [IcePick](https://github.com/frankiesardo/icepick) | Android Instance State made easy |
-| [Akatsuki](https://github.com/tom91136/Akatsuki) | Handles instanace state restoration via annotations |
 | [Crouton](https://github.com/keyboardsurfer/Crouton) | Context-sensitive, configurable alert notices much better than toasts |
 | [Hugo](https://github.com/JakeWharton/hugo) | Easier logging using annotations |
 | [LeakCanary](https://github.com/square/leakcanary) | Catch memory leaks in your apps | 
+| [[Espresso|UI-Testing-with-Espresso]] | Powerful DSL for Android integration testing |
+| [[Robolectric|Unit-Testing-with-Robolectric]] | Efficient unit testing for Android |
+
+The "advanced pack" listed below are additional libraries that are more advanced to use but are popular amongst some of the best Android teams. Note that these libraries may not be suitable for your first app. These advanced libraries include:
+
+| Name            | Description                                                 |  
+| ----            | ------------                                                |
+| [[Dagger 2|Dependency-Injection-with-Dagger-2]]  | A fast dependency injector for managing objects.           |
+| [RxAndroid](https://github.com/ReactiveX/RxAndroid) | Develop fully reactive components for Android.       |
+| [[Otto|Communicating-with-an-Event-Bus]] | Android event bus for easier component communication.             |
+| [AndroidAnnotations](https://github.com/excilys/androidannotations) | Powerful annotations to reduce boilerplate code. |
 
 Keep in mind that the combination of these libraries may not always play nicely with each other.  The following section highlights some of these issues.
 
@@ -37,7 +47,7 @@ Using the Butterknife library with the Parceler library causes multiple declarat
 
 #### ButterKnife and Custom Views
 
-Often you may find that using Butterknife or Dagger injections defined in your constructor prevent Android Studio to preview your Custom View layout.  You may see an error about needing `isEditMode()` defined.
+Often you may find that using ButterKnife or Dagger injections defined in your constructor prevent Android Studio to preview your Custom View layout.  You may see an error about needing `isEditMode()` defined.
 Essentially this method is used to enable your code to short-circuit before executing a section of code that might be used for run-time but cannot be executed within the preview window.
 
 ```java
@@ -54,13 +64,14 @@ Essentially this method is used to enable your code to short-circuit before exec
             return;
         }
 
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 ```
 
 ### Convenience
 
  * [Dagger](http://square.github.io/dagger/) - A fast dependency injector for Android and Java.  See this [video intro](http://www.infoq.com/presentations/Dagger) from Square.
  * [AutoParcel](https://github.com/frankiesardo/auto-parcel) - Port of Google AutoValue for Android with Parcelable generation goodies.
+ * [Akatsuki](https://github.com/tom91136/Akatsuki) - Handles instance state restoration via annotations
  * [Hugo](https://github.com/JakeWharton/hugo) - Easier logging within your app
  * [Logger](https://github.com/orhanobut/logger) - Much cleaner and easier logcat trace messages
  * [Trikita Log](https://github.com/zserge/log) - Tiny logger backwards compatible with android.util.Log, but supporting format strings, comma-separated values, non-android JVMs, optional tags etc
@@ -92,6 +103,7 @@ Essentially this method is used to enable your code to short-circuit before exec
  * [Glide](https://github.com/bumptech/glide) - Picasso image loading alternative endorsed by Google 
  * [IceNet] (https://github.com/anton46/IceNet) -  Android networking wrapper consisting of a combination of Volley, OkHttp and Gson
  * [Android Universal Image Loader](https://github.com/nostra13/Android-Universal-Image-Loader) - Popular alternative for image loading that can replace Picasso or Glide.
+ * [Fresco](http://frescolib.org/) - An image management library from **Facebook**.
 
 ### ListView
 
@@ -110,6 +122,7 @@ Essentially this method is used to enable your code to short-circuit before exec
 
 * [UltimateRecyclerView](https://github.com/cymcsg/UltimateRecyclerView) - Augmented RecyclerView with refreshing, loading more, animation and many other features.
 * [android-parallax-recyclerview](https://github.com/kanytu/android-parallax-recyclerview) - An adapter which could be used to achieve a parallax effect on RecyclerView.
+* [sticky-headers-recyclerview](https://github.com/timehop/sticky-headers-recyclerview) - Sticky Headers decorator for Android's RecyclerView.
 
 ### Easy Navigation 
 
@@ -130,6 +143,7 @@ Essentially this method is used to enable your code to short-circuit before exec
 
  * [Crouton](https://github.com/keyboardsurfer/Crouton) - Context-sensitive, configurable alert notices much better than toasts. Download jar [from here](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22de.keyboardsurfer.android.widget%22). See [working sample code](https://github.com/codepath/android-crouton-sample)
  * [BetterPickers](https://github.com/derekbrameyer/android-betterpickers) - BetterPickers for easy input selection
+ * [android-shape-imageview](https://github.com/siyamed/android-shape-imageview) - Custom shaped android imageview components including bubble, star, heart, diamond.
  * [RoundedImageView](https://github.com/vinc3m1/RoundedImageView) - Easily round corners or create oval-shaped images with this popular library.
  * [Android StackBlur](https://github.com/kikoso/android-stackblur) - Dynamically blur images
  * [Android Bootstrap](https://github.com/Bearded-Hen/Android-Bootstrap) - Bootstrap UI widgets
@@ -147,6 +161,7 @@ Essentially this method is used to enable your code to short-circuit before exec
  * [dialogplus](https://github.com/orhanobut/dialogplus) - Simple, easy dialogs
  * [Iconify](https://github.com/JoanZapata/android-iconify) - Easily embed icons into your app
  * [Android StepsView](https://github.com/anton46/Android-StepsView) - A library to create StepsView for Android
+* [PhotoView](https://github.com/chrisbanes/PhotoView) - A library to pinch zoom in and zoom out and double tap zoom for Android
 
 ### Drawing
 
@@ -161,6 +176,8 @@ Essentially this method is used to enable your code to short-circuit before exec
  * [WilliamChart](https://github.com/diogobernardino/WilliamChart) - Flexible charting library with useful motion capabilities.
  * [HelloCharts](https://github.com/lecho/hellocharts-android) - Charts/graphs library for Android with support for scaling, scrolling and animations.
  * [MPAndroidChart](https://github.com/PhilJay/MPAndroidChart)-A powerful Android chart view / graph view library, supporting line- bar- pie- radar- bubble- and candlestick charts as well as scaling, dragging and animations.
+ * [Scissors](https://github.com/lyft/scissors)-A image cropping library developed by lynt.
+
 
 ### Scanning
 
@@ -176,7 +193,7 @@ Essentially this method is used to enable your code to short-circuit before exec
  * [SugarORM](http://satyan.github.io/sugar/)
  * [ORMLite](http://ormlite.com/sqlite_java_android_orm.shtml)
  * [SQLBrite](https://github.com/square/sqlbrite) - Lightweight wrapper around SQLiteOpenHelper
- * [Cupboard](https://guides.codepath.com/android/Easier-SQL-with-Cupboard)
+ * [[Cupboard|Easier-SQL-with-Cupboard]]
  * [Realm](https://github.com/realm/realm-java)
  * [NexusData](https://github.com/dkharrat/NexusData)
  * [Hawk](https://github.com/orhanobut/hawk) - Persistent secure key/value store

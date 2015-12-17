@@ -63,6 +63,9 @@ public final class BusProvider {
 Since services normally run on separate threads from the main UI thread, we must also ensure that the events are published on the main thread by subscribers to handle especially if they update the screen.  We expose some extra functionality to provide the ability for services to explicitly publish on the main thread:
 
 ```java
+public final class BusProvider {
+    // other methods here
+
     private static final Handler mainThread = new Handler(Looper.getMainLooper());
 
     public static void postOnMain(final Object event) {
@@ -78,6 +81,7 @@ Since services normally run on separate threads from the main UI thread, we must
             });
         }
     }
+}
 ```
 
 ### Registering on the Bus
@@ -155,7 +159,76 @@ Assuming the Activity is registered on the bus, Otto will look for any subscribe
 
 ### Using Otto with dependency injection
 
-The example shown uses a singleton instance and makes a lot of repetitive `BusProvider.getInstance()` calls.  You can also use the [[Dagger|Dependency-Injection-with-Dagger-2]] library to define an instance as a member variable in each class.
+The example shown uses a singleton instance and makes a lot of repetitive `BusProvider.getInstance()` calls.  You can also use the [[Dagger 2|Dependency-Injection-with-Dagger-2]] library to help reduce these calls.   If we want to support posting events on the main thread, we can extend the Otto `Bus` and provide an `EventBus` instance instead:
+
+```
+public class EventBus extends Bus {
+    private final Handler mainThread = new Handler(Looper.getMainLooper());
+
+    public EventBus() {
+    }
+
+    public void postOnMain(final Object event) {
+        if(Looper.myLooper() == Looper.getMainLooper()) {
+            super.post(event);
+        } else {
+            this.mainThread.post(new Runnable() {
+                public void run() {
+                    EventBus.this.post(event);
+                }
+            });
+        }
+
+    }
+}
+```
+
+We simply need to declare in our Dagger module a singleton that provides an Otto `Bus` object in `AppModule.java` file:
+
+```java
+@Provides
+@Singleton
+EventBus provideBus() {
+   return new EventBus();
+}
+```
+
+Inside your activity, fragment, or service, you would simply need to define the field that will be assigned this reference and call the injection class to bind the field to the singleton instance:
+
+```java
+public class MainActivity extends AppCompatActivity {
+  @Inject EventBus mBus;
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState)
+    ((MyApp) getApplication()).getAppComponent().inject(this);
+
+    // do other stuff here 
+  }
+}
+```
+
+You can also remove the unnecessary `getInstance()` calls previously when registering and unregistering the bus:
+
+```java
+public class MainActivity extends AppCompatActivity {
+
+    // injection code here
+  
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mBus.unregister(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mBus.register(this);
+    }
+}
+```
 
 ### Installing the Otto plugin
 

@@ -91,7 +91,7 @@ public class FirstFragment extends Fragment {
 Now we need to define the adapter that will properly determine how many pages exist and which fragment to display for each page of the adapter by creating a [FragmentPagerAdapter](http://developer.android.com/reference/android/support/v4/app/FragmentPagerAdapter.html):
 
 ```java
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
 	// ...
 	
     public static class MyPagerAdapter extends FragmentPagerAdapter {
@@ -140,7 +140,7 @@ For more complex cases with many pages, check out the [[more dynamic approach|Vi
 Finally, let's associate the `ViewPager` with a new instance of our adapter:
 
 ```java
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
 	FragmentPagerAdapter adapterViewPager;
 
 	@Override
@@ -227,7 +227,7 @@ First, copy in the [SmartFragmentStatePagerAdapter.java](https://gist.github.com
 Now, we want to extend from `SmartFragmentStatePagerAdapter` copied above when declaring our adapter so we can take advantage of the better memory management of the state pager:
 
 ```java
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
     // ...
     private SmartFragmentStatePagerAdapter adapterViewPager;
     
@@ -400,7 +400,106 @@ The first step is to define a custom `ViewPager` [subclass called LockableViewPa
 ```
 
 Now, just call `setSwipeable(false)` to disable swiping to change the page. 
+
+## Launching an Activity with Tab Selected
+
+Often when launching a tabbed activity, there needs to be a way to select a particular tab to be displayed once the activity loads. For example, an activity has three tabs with one tab being a list of created posts. After a user creates a post on a separate activity, the user needs to be returned to the main activity with the "new posts" tab displayed. This can be done through the use of intent extras and the `ViewPager#setCurrentItem` method. First, when launching the tabbed activity, we need to pass in the selected tab as an extra:
+
+```java
+/* In creation activity that wants to launch a tabbed activity */
+Intent intent = new Intent(this, MyTabbedActivity.class);
+// Pass in tab to be displayed
+i.putExtra(MyTabbedActivity.SELECTED_TAB_EXTRA_KEY, MyTabbedActivity.NEW_POSTS_TAB);
+// Start the activity
+startActivity(i);
+```
+
+If the activity needs to return a result, we can also [[return this as an activity result|Using-Intents-to-Create-Flows#returning-data-result-to-parent-activity]]. Next, we can read this information from the intent within the tabbed activity:
+
+```java
+/* In tabbed activity */
+public final static int SELECTED_TAB_EXTRA_KEY = "selectedTabIndex";
+public final static int HOME_TAB = 0;
+public final static int FAVORITES_TAB = 1;
+public final static int NEW_POSTS_TAB = 2;
+
+@Override
+public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.main_activity);
+    // Set the selected tab
+    setSelectedTab();
+}
+
+// Reads selected tab from launching intent and 
+// sets page accordingly
+public void setSelectedTab() {
+   // Fetch the selected tab index with default
+   int selectedTabIndex = getIntent().getIntExtra(SELECTED_TAB_EXTRA_KEY, HOME_TAB); 
+   // Switch to page based on index
+   vpPager.setCurrentItem(selectedTabIndex);
+}
+```
+
+With that, any activity can launch the tabbed activity with the ability to configure the selected tab.
+
+## Custom Pages without Fragments
+
+While a `ViewPager` is often coupled with a `Fragment` for each page using the `FragmentPagerAdapter`, there are cases where the pages are better off as plain views. 
+
+<img src="http://i.imgur.com/VaCvAm5.png" width="200" />
+
+A good example is an image gallery, where the user can swipe between different pictures. To achieve this, we can extend from `PagerAdapter`:
+
+```java
+// Custom pager adapter not using fragments
+class CustomPagerAdapter extends PagerAdapter {
  
+    Context mContext;
+    LayoutInflater mLayoutInflater;
+    ArrayList<Page> pages = new ArrayList<>();
+ 
+    public CustomPagerAdapter(Context context) {
+        mContext = context;
+        mLayoutInflater = LayoutInflater.from(mContext);
+    }
+ 
+    // Returns the number of pages to be displayed in the ViewPager.
+    @Override
+    public int getCount() {
+        return pages.size();
+    }
+ 
+    // Returns true if a particular object (page) is from a particular page
+    @Override
+    public boolean isViewFromObject(View view, Object object) {
+        return view == object;
+    }
+ 
+    // This method should create the page for the given position passed to it as an argument. 
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
+        // Inflate the layout for the page
+        View itemView = mLayoutInflater.inflate(R.layout.pager_item, container, false);
+        // Find and populate data into the page (i.e set the image)
+        ImageView imageView = (ImageView) itemView.findViewById(R.id.imageView);
+        // ...
+        // Add the page to the container
+        container.addView(itemView);
+        // Return the page
+        return itemView;
+    }
+ 
+    // Removes the page from the container for the given position.
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        container.removeView((View) object);
+    }
+}
+```
+
+This is most commonly used for image slideshows or galleries. See [this image gallery tutorial](http://codetheory.in/android-image-slideshow-using-viewpager-pageradapter/) or this [viewpager without fragments](https://www.bignerdranch.com/blog/viewpager-without-fragments/) guide for more detailed steps.
+
 ## References
 
 * <http://architects.dzone.com/articles/android-tutorial-using>

@@ -1,5 +1,3 @@
-# Creating Flexible UIs
-
 ## Overview
 
 Flexible User Interfaces is a key part of proper Android app development. We need to ensure that our apps work across a wide variety of devices, versions, orientations and locales. Thankfully, Android has several powerful constructs that make responsive, flexible user interfaces fairly easy.
@@ -10,16 +8,11 @@ This is typically used for creating robust applications that work across differe
 
 The core features that make responsive, robust and flexible layouts possible are:
 
- * [[RelativeLayout|Constructing-View-Layouts#relativelayout]] - While `LinearLayout` has uses, the most responsive layout is the Relative which allows you to specify your layout in terms of the spatial relationships.
- * [Alternative Resources](http://developer.android.com/guide/topics/resources/providing-resources.html#AlternativeResources) - The ability to have multiple resource files (XML, images, etc) that will be automatically selected based on specified qualifiers (screen size, time of day, locale, etc). Using [size qualifiers](http://developer.android.com/training/multiscreen/screensizes.html#TaskUseSizeQuali) is the best way to create flexible applications.
+ * [[RelativeLayout|Constructing-View-Layouts#relativelayout]] - While `LinearLayout` has uses, the most responsive layout is the Relative which allows you to specify your layout in terms of the spatial relationships. For more flexibility, the [[PercentRelativeLayout|Constructing-View-Layouts#percentrelativelayout]] can be used for elastic percentage based dimensions in conjunction with `RelativeLayout`.
+ * [[Alternative Resources|Understanding-App-Resources#responsive-design]] - The ability to have multiple resource files (XML, images, etc) that will be automatically selected based on specified qualifiers (screen size, time of day, locale, etc). Using [size qualifiers](http://developer.android.com/training/multiscreen/screensizes.html#TaskUseSizeQuali) is the best way to create flexible applications.
  * [[Fragments|Creating-and-Using-Fragments]] - Reusable modular components that Activities can be composed from. This allows us to have alternate activity layouts all using the same fragments.
- * [Drawables and Nine-Patch](http://developer.android.com/training/multiscreen/screensizes.html#TaskUse9Patch) - Drawable XML shapes are inherently responsive but if we need to use images for buttons, we need to make sure that the images are setup to scale properly using the 9-patch system.
-
-To be covered:
-
- * Managing screen sizes, orientations
- * onSaveInstanceState to store state across rotation
- * Localization, using different language XML files
+ * [[Drawables and Nine-Patch|Drawables#stretchable-nine-patch-image]] - Drawable XML shapes are inherently responsive but if we need to use images for buttons, we need to make sure that the images are setup to scale properly using the 9-patch system.
+ * [Handling Configuration Changes](http://guides.codepath.com/android/Handling-Configuration-Changes) - Properly persisting view state across configuration changes such as screen rotation.
 
 ### Supporting Different Screens and Densities
 
@@ -202,10 +195,10 @@ Next, let's lay the fragments onto the Activity. For now, let's assume a phone i
 </RelativeLayout>
 ```
 
-and then let's change the `ItemsListActivity` to extend from `FragmentActivity` to enable support fragments:
+and then let's change the `ItemsListActivity` to extend from `AppCompatActivity` to enable support fragments:
 
 ```
-public class ItemsListActivity extends FragmentActivity {
+public class ItemsListActivity extends AppCompatActivity {
   // ...
 }
 ```
@@ -278,7 +271,7 @@ Inside our `ItemDetailActivity`, we just need to embed a `FrameLayout` that will
 and then we need a way to dynamically load the correct item fragment. To do this, we need this `ItemDetailActivity` to be launched with a particular item being passed in that we can then use to populate the appropriate details. Let's assume that when `ItemDetailActivity` it will have an "item" key passed into the Bundle which is a serialized version of the item that should be displayed. In the constructor then, we might add:
 
 ```java
-public class ItemDetailActivity extends FragmentActivity {
+public class ItemDetailActivity extends AppCompatActivity {
   ItemDetailFragment fragmentItemDetail;
 
   @Override
@@ -356,7 +349,7 @@ public class ItemDetailFragment extends Fragment {
 Now with this, in `onCreate` we extract the `Item` that was passed in with `setArguments` during creation and then in `onCreateView` we display the title and body of the item within the text views. So now when we create a detail fragment with `newInstance`, the item passed in will populate the details of the view. Finally, let's use `newInstance` in our `ItemDetailActivity`:
 
 ```java
-public class ItemDetailActivity extends FragmentActivity {
+public class ItemDetailActivity extends AppCompatActivity {
   ItemDetailFragment fragmentItemDetail;
 
   @Override
@@ -442,7 +435,7 @@ public class ItemsListFragment extends Fragment {
 and then let's setup the handler within our activity so we can handle the `onItemSelected` event properly:
 
 ```java
-public class ItemsListActivity extends FragmentActivity implements
+public class ItemsListActivity extends AppCompatActivity implements
     OnListItemSelectedListener {
 
   // ...
@@ -525,7 +518,7 @@ This layout is only used **when the screen size is large** such as a tablet. In 
 Now we have a two-pane view on a tablet and single pane for the phones. However, we need to intelligently determine what to do when we select an item from the list. On the phone, we want to launch an intent but on the tablet we want to **dynamically insert the detail fragment** onto the existing Activity. Let's take a look at how we can change the behavior of our Activity depending on if we are in a one pane or two pane layout:
 
 ```java
-public class ItemsListActivity extends FragmentActivity implements OnItemSelectedListener {
+public class ItemsListActivity extends AppCompatActivity implements OnItemSelectedListener {
   // Flag determines if this is a one or two pane layout
   private boolean isTwoPane = false;
   
@@ -552,7 +545,7 @@ public class ItemsListActivity extends FragmentActivity implements OnItemSelecte
 Now, if there is a second pane, the `isTwoPane` flag will be set to true. If we are on a phone with a single pane, the other XML file will be used and the `isTwoPane` will be false. Now we can use this to determine what to do in `onItemSelected`:
 
 ```java
-public class ItemsListActivity extends FragmentActivity implements OnItemSelectedListener {
+public class ItemsListActivity extends AppCompatActivity implements OnItemSelectedListener {
     @Override
     public void onItemSelected(Item item) {
       if (isTwoPane) { // single activity with list and detail
@@ -600,7 +593,7 @@ public class ItemsListFragment extends Fragment {
 and then use this method in our activity but **only for the two-pane** case:
 
 ```java
-public class ItemsListActivity extends FragmentActivity implements
+public class ItemsListActivity extends AppCompatActivity implements
   OnListItemSelectedListener {
 
   // ...

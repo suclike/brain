@@ -24,6 +24,10 @@ Make sure to enable access to the external storage first before using the camera
 </manifest>
 ```
 
+**Note:** The permissions model has changed starting in Marshmallow. If your `targetSdkVersion` >= `23` and you are running on a Marshmallow (or later) device / emulator, you'll need to follow this guide on [[implementing runtime permissions|Understanding-App-Permissions#runtime-permissions]] in order to get these permissions.
+
+### Using Capture Intent
+
 Easy way works in most cases, using the intent to [launch the camera](http://developer.android.com/guide/topics/media/camera.html):
 
 ```java
@@ -35,8 +39,13 @@ public void onLaunchCamera(View view) {
     // create Intent to take a picture and return control to the calling application
     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
     intent.putExtra(MediaStore.EXTRA_OUTPUT, getPhotoFileUri(photoFileName)); // set the image file name
-    // Start the image capture intent to take photo
-    startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+    
+    // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
+    // So as long as the result is not null, it's safe to use the intent.
+    if (intent.resolveActivity(getPackageManager()) != null) {
+        // Start the image capture intent to take photo
+        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+    }
 }
 
 @Override
@@ -59,18 +68,17 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 public Uri getPhotoFileUri(String fileName) {
     // Only continue if the SD Card is mounted
     if (isExternalStorageAvailable()) {
+        // Get safe storage directory for photos
+        File mediaStorageDir = new File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), APP_TAG);
 
-    // Get safe storage directory for photos
-    File mediaStorageDir = new File(
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), APP_TAG);
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+            Log.d(APP_TAG, "failed to create directory");
+        }
 
-    // Create the storage directory if it does not exist
-    if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
-        Log.d(APP_TAG, "failed to create directory");
-    }
-
-    // Return the file target for the photo based on filename
-    return Uri.fromFile(new File(mediaStorageDir.getPath() + File.separator + fileName));
+        // Return the file target for the photo based on filename
+        return Uri.fromFile(new File(mediaStorageDir.getPath() + File.separator + fileName));
     }
     return null;
 }
@@ -130,6 +138,17 @@ public Bitmap rotateBitmapOrientation(String photoFilePath) {
 
 See [this guide](http://stackoverflow.com/a/12933632/313399) for the source for this answer. Be aware that on certain devices even the EXIF data isn't set properly, in which case you should [checkout this workaround](http://stackoverflow.com/a/8864367/313399) for a fix.
 
+### Building a Custom Camera
+
+Instead of using the capture intent to capture photos "the easy way", a custom camera can be used within your app directly leveraging the [Camera2 API](https://developer.android.com/reference/android/hardware/camera2/package-summary.html). This custom camera is much more complicated to implement but [sample code can be found here](https://github.com/googlesamples/android-Camera2Basic). However, there are a number of third-party libraries available to make custom camera easier:
+
+ * [CWAC-Cam2](https://github.com/commonsguy/cwac-cam2)
+ * [EasyCamera](https://github.com/Glamdring/EasyCamera)
+ * [SquareCamera](https://github.com/boxme/SquareCamera)
+ * [Many other libraries](http://android-arsenal.com/tag/141)
+
+Leveraging `Camera2` or the libraries above, apps can develop a camera that functions in anyway required including custom overlays for depositing checks, taking pictures with a particular form factor, or scanning custom barcodes.
+
 ## Accessing Stored Media
 
 Similar to the camera, the media picker implementation depends on the level of customization required:
@@ -137,7 +156,7 @@ Similar to the camera, the media picker implementation depends on the level of c
  * The easy way - launch the Gallery with an intent, and get the media URI in onActivityResult.
  * The hard way - fetch thumbnail and full-size URIs from the MediaStore ContentProvider.
 
-Make sure to enable access to the external storage first before using the camera:
+Make sure to enable access to the external storage first before using the camera (**Note:** The permissions model has changed starting in Marshmallow. If your `targetSdkVersion` >= `23` and you are running on a Marshmallow (or later) device / emulator, you'll need to follow this guide on implementing [[runtime permissions|Understanding-App-Permissions#runtime-permissions]] in order to get these permissions):
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -163,8 +182,13 @@ public void onPickPhoto(View view) {
     // Create intent for picking a photo from the gallery
     Intent intent = new Intent(Intent.ACTION_PICK,
         MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-    // Bring up gallery to select a photo
-    startActivityForResult(intent, PICK_PHOTO_CODE);
+    
+    // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
+    // So as long as the result is not null, it's safe to use the intent.
+    if (intent.resolveActivity(getPackageManager()) != null) {
+       // Bring up gallery to select a photo
+       startActivityForResult(intent, PICK_PHOTO_CODE);
+    }
 }
 
 @Override

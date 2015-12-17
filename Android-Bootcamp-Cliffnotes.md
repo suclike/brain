@@ -6,16 +6,18 @@ Cliffnotes are references giving you the "most important" Android topics with br
 * [[Android Directory Structure]]
 * [[Organizing your Source Files]]
 * [[Troubleshooting Common Issues]]
-* [[Using String Resources]]
+* [[Understanding App Resources]]
 * [[Constructing View Layouts]]
 * [[Defining Views and their Attributes]] 
-* [[Using Context]]
-* [[Understanding the Activity Lifecycle|The Activity Lifecycle]]
+* [[Using an ArrayAdapter with ListView]]
 * [[Working with the TextView]]
 * [[Working with the EditText]]
 * [[Working with the ImageView]]
 * [[Working with the Soft Keyboard]]
-* [[Using an ArrayAdapter with ListView]]
+* [[Organizing your Source Files]]
+* [[Using Context]]
+* [[Understanding the Activity Lifecycle|Activity Lifecycle]]
+* [[Displaying Images with the Picasso Library]]
 
 ### Week 2 - Interaction and Navigation
 
@@ -24,18 +26,22 @@ Cliffnotes are references giving you the "most important" Android topics with br
 * [[Displaying Toasts]]
 * [[Using Intents to Create Flows]]
 * [[Common Implicit Intents]]
-* [[Endless Scrolling with AdapterViews]]
+* [[Endless Scrolling with AdapterViews and RecyclerView]]
 * [[Sharing Content with Intents]]
 * [[Creating Custom Listeners]]
+* [[Navigation and Task Stacks]]
+* [[Extended ActionBar Guide]]
 
 ### Week 3 - Networking and Persistence
 
 * [[Creating and Executing Async Tasks]]
 * [[Sending and Managing Network Requests]]
+* [[Displaying Images with the Picasso Library]]
+* [[Android Async Http Client Guide|Using-Android-Async-Http-Client]]
 * [[Converting JSON to Models]]
 * [[Persisting Data to the Device]]
 * [[ActiveAndroid Tips and Q&A|ActiveAndroid Guide]]
-* [[RottenTomatoes Networking Tutorial]]
+* [[Rotten Tomatoes Networking Tutorial]]
 * [[Building Data driven Apps with Parse]]
 * [[Local Databases with SQLiteOpenHelper]]
 * [[Populating a ListView with a CursorAdapter]]
@@ -58,7 +64,8 @@ Cliffnotes are references giving you the "most important" Android topics with br
 * [[Populating a ListView with a CursorAdapter]]
 * [[Accessing the Camera and Stored Media]]
 * [[Video and Audio Playback and Recording]]
-* [[Listening to Sensors and Location]]
+* [[Retrieving Location with LocationServices API]]
+* [[Listening to Sensors using SensorManager]]
 * [[Google Maps Setup Guide|Google Maps Fragment Guide]]
 * [[Google Maps API v2 Usage]]
 * [[Push Messaging]] (with Parse)
@@ -89,7 +96,8 @@ Cliffnotes are references giving you the "most important" Android topics with br
 * [[Flexible User Interfaces]]
 * [[Starting Background Services]]
 * [[Notifications]]
-* [[Android Unit and Integration testing]]
+* [[Managing Threads and Custom Services]]
+* [[Android Testing Options]]
 * [Publishing to the Play Store](http://goo.gl/mUlGL1)
 * [[Popular External Tools]]
 * [[Getting Started with Gradle]]
@@ -97,8 +105,6 @@ Cliffnotes are references giving you the "most important" Android topics with br
 ### Recommended
 
 * [[Handling Configuration Changes]]
-* [[Managing Threads and Custom Services]]
-* [[Extended ActionBar Guide]]
 * [[Menus and Popups]]
 * [[Using DialogFragment]]
 * [[Genymotion 2.0 Emulators with Google Play support]]

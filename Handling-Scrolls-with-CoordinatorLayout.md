@@ -15,7 +15,15 @@
 
   <img src="http://imgur.com/1JHP0cP.gif"/>
 
-## Setup
+### Code Samples
+
+Chris Banes from Google has put together a beautiful demo of the `CoordinatorLayout` and other [[design support library]] features.
+
+<a href="https://github.com/chrisbanes/cheesesquare"><img src="http://i.imgur.com/aA8aGSg.png" width="500" /></a>
+
+The [full source code](https://github.com/chrisbanes/cheesesquare) can be found on github. This project is one of the easiest ways to understand `CoordinatorLayout`.
+
+### Setup
 
 Make sure to follow the [[Design Support Library]] instructions first.
 
@@ -57,7 +65,7 @@ So long as the CoordinatorLayout is used as the primary layout, this animation e
 
 <img src="http://imgur.com/X5AIH0P.gif" width="350"/>
 
-The first step is to make sure you are not using the deprecated ActionBar.  Make sure to follow the [Using the ToolBar as ActionBar](http://guides.codepath.com/android/Defining-The-ActionBar#using-toolbar-as-actionbar) guide.  Also make sure that the CoordinatorLayout is the main layout container.
+The first step is to make sure you are not using the deprecated ActionBar.  Make sure to follow the [[Using the ToolBar as ActionBar|Using-the-App-Toolbar#using-toolbar-as-actionbar]] guide.  Also make sure that the CoordinatorLayout is the main layout container.
 
 ```xml
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -130,13 +138,36 @@ Scroll events in the RecyclerView trigger changes inside views declared within `
  </android.support.design.widget.AppBarLayout>
 ```
 
-The `scroll` flag used within the attribute `app:layout_scrollFlags` must be enabled in order for the View to scroll off the screen.  Otherwise, it will remain pinned to the top.    Other flags that can be used include:
- 
-   * `enterAlways`: The view will become visible when scrolling up.
-   * `enterAlwaysCollapsed`: Assuming you have declared a minHeight and `enterAlways` is declared, your view will only appear at its minimum height and expand to the full height when the scrolling view reaches to the top.
-   * `exitUntilCollapsed`: Assuming you have declared a minHeight, the view will disappear once the minimum height is reached.
+The `scroll` flag used within the attribute `app:layout_scrollFlags` must be enabled for any scroll effects to take into effect.  This flag must be enabled along with `enterAlways`, `enterAlwaysCollapsed`, `exitUntilCollapsed`, or `snap`:
 
-Keep in mind to order all your views with the scroll flag first.  This way, the views that collapse will exit first while leaving the pinned elements at the top.
+  * `enterAlways`: The view will become visible when scrolling up.  This flag is useful in cases when scrolling from the bottom of a list and wanting to expose the `Toolbar` as soon as scrolling up takes place.  
+ 
+    <img src="http://imgur.com/sGltNwr.png"/>
+    
+    Normally, the `Toolbar` only appears when the list is scrolled to the top as shown below:
+    
+    <img src="http://i.imgur.com/IZzcL1C.png"/>
+
+  * `enterAlwaysCollapsed`:   Normally, when only `enterAlways` is used, the `Toolbar` will continue to expand as you scroll up:
+
+    <img src="http://imgur.com/nVtheyw.png"/>
+
+    Assuming `enterAlways` is declared and you have specified a `minHeight`, you can also specify `enterAlwaysCollapsed`.  When this setting is used, your view will only appear at this minimum height. Only when scrolling reaches to the top will the view expand to its full height:
+
+    <img src="http://imgur.com/HqR8Nx5.png">
+
+  * `exitUntilCollapsed`: When the `scroll` flag is set, scrolling down will normally cause the entire content to move:
+
+    <img src="http://imgur.com/qpEr4x5.png"/>
+
+    By specifying a `minHeight` and `exitUntilCollapsed`, the minimum height of the `Toolbar` will be reached before the rest of the content begins to scroll and exit from the screen:
+
+    <img src="http://imgur.com/dTDPztp.png"/>
+     
+  * `snap`: Using this option will determine what to do when a view only has been partially reduced.  If scrolling ends and the view size has been reduced to less than 50% of its original, then this view to return to its original size.  If the size is greater than 50% of its sized, it will disappear completely.  
+       <img src="http://i.imgur.com/9hnupWJ.png"/>
+
+**Note**: Keep in mind to order all your views with the `scroll` flag first.  This way, the views that collapse will exit first while leaving the pinned elements at the top.
 
 At this point, you should notice that the Toolbar responds to scroll events.  
 
@@ -162,7 +193,8 @@ If we want to create the collapsing toolbar effect, we must wrap the Toolbar ins
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_scrollFlags="scroll|enterAlways"></android.support.v7.widget.Toolbar>
-        </android.support.design.widget.CollapsingToolbarLayout>
+
+</android.support.design.widget.CollapsingToolbarLayout>
 ```
 
 Your result should now appears as:
@@ -174,8 +206,25 @@ Normally, we set the title of the Toolbar. Now, we need to set the title on the 
 ```java
    CollapsingToolbarLayout collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbar.setTitle("Title");
+   collapsingToolbar.setTitle("Title");
 ```
+
+Note that when using `CollapsingToolbarLayout`, the status bar should be made translucent (API 19) or transparent (API 21) as [shown in this file](https://github.com/chrisbanes/cheesesquare/blob/master/app/src/main/res/values-v21/styles.xml). In particular, the following styles should be set in `res/values-xx/styles.xml` as illustrated:
+
+```xml
+<!-- res/values-v19/styles.xml -->
+<style name="AppTheme" parent="Base.AppTheme">
+    <item name="android:windowTranslucentStatus">true</item>
+</style>
+
+<!-- res/values-v21/styles.xml -->
+<style name="AppTheme" parent="Base.AppTheme">
+    <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    <item name="android:statusBarColor">@android:color/transparent</item>
+</style>
+```
+
+By enabling translucent system bars as shown above, your layout will fill the area behind the system bars, so you must also enable `android:fitsSystemWindow` for the portions of your layout that should not be covered by the system bars. An additional workaround for API 19 which adds padding to avoid the status bar clipping views [can be found here](http://blog.raffaeu.com/archive/2015/04/11/android-and-the-transparent-status-bar.aspx).
 
 ### Creating Parallax Animations
 
@@ -186,15 +235,15 @@ The CollapsingToolbarLayout also enables us to do more advanced animations, such
 To create this effect, we add an ImageView and declare an `app:layout_collapseMode="parallax"` attribute to the tag.
 
 ```xml
-    <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/collapsing_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
-            app:expandedTitleMarginEnd="64dp"
-            app:expandedTitleMarginStart="48dp"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+<android.support.design.widget.CollapsingToolbarLayout
+    android:id="@+id/collapsing_toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    app:contentScrim="?attr/colorPrimary"
+    app:expandedTitleMarginEnd="64dp"
+    app:expandedTitleMarginStart="48dp"
+    app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -210,12 +259,12 @@ To create this effect, we add an ImageView and declare an `app:layout_collapseMo
                 app:layout_collapseMode="parallax"
                 android:minHeight="100dp"/>
 
-        </android.support.design.widget.CollapsingToolbarLayout>
+</android.support.design.widget.CollapsingToolbarLayout>
 ```
 
 ## Custom Behaviors
 
-One example of a custom behavior is discussed in using [CoordinatorLayout with Floating Action Buttons](http://guides.codepath.com/android/Floating-Action-Buttons#using-coordinatorlayout).  
+One example of a custom behavior is discussed in using [[CoordinatorLayout with Floating Action Buttons|Floating-Action-Buttons#using-coordinatorlayout]].  
 
 CoordinatorLayout works by searching through any child view that has a [CoordinatorLayout Behavior](http://developer.android.com/reference/android/support/design/widget/CoordinatorLayout.Behavior.html) defined either statically as XML with a `app:layout_behavior` tag or programmatically with the View class annotated with the `@DefaultBehavior` decorator.  When a scroll event happens, CoordinatorLayout attempts to trigger other child views that are declared as dependencies.
 
@@ -240,7 +289,11 @@ The best way to understand how to implement these custom behaviors is by studyin
 
 ## Third-Party Scrolling and Parallax
 
-In addition to using the `CoordinatorLayout` as outlined above, be sure to check out [these popular third-party libraries](https://guides.codepath.com/android/Must-Have-Libraries#scrolling-and-parallax) for scrolling and parallax effects across `ScrollView`, `ListView`, `ViewPager` and `RecyclerView`.
+In addition to using the `CoordinatorLayout` as outlined above, be sure to check out [[these popular third-party libraries|Must-Have-Libraries#scrolling-and-parallax]] for scrolling and parallax effects across `ScrollView`, `ListView`, `ViewPager` and `RecyclerView`.
+
+## Embedding Google Maps in AppBarLayout
+
+There is currently no way of supporting Google Maps fragment within an `AppBarLayout` as confirmed in this [issue](https://code.google.com/p/android/issues/detail?id=188487).  Changes in the support design library v23.1.0 now provide a `setOnDragListener()` method, which is useful if [[drag and drop effects|Gestures-and-Touch-Events#dragging-and-dropping]] are needed within this layout.  However, it does not appear to impact scrolling as stated in this [blog article](http://android-developers.blogspot.com/2015/10/android-support-library-231.html?linkId=17977963).
 
 ## References
 

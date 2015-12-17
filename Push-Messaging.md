@@ -84,8 +84,6 @@ Once a `BroadcastReceiver` is listening for messages, there are a few actions th
 
 You can review examples of these [outlined in this more elaborate code sample](https://github.com/codepath/ParsePushNotificationExample/blob/master/app/src/main/java/com/test/MyCustomReceiver.java). 
 
-In certain cases when receiving a push, you want to **update an activity only if the activity is on the screen**. Otherwise, you want to raise a notification. The solutions to this are [outlined in this post](http://stackoverflow.com/a/18311830/313399) with a [code sample here](http://stackoverflow.com/a/15949723/313399).
-
 #### Creating Dashboard Notifications
 
 By default, Parse will create dashboard notifications based on certain details of the push message that are sent if you specify the "alert" and "title" properties in the notification. In the event that you want to manually manage the notifications, all you have to do is avoid sending the `alert` or `title` so parse doesn't create the notification for you. 
@@ -94,7 +92,13 @@ Details of setting up custom push notifications can be [found in this guide](htt
 
 ##### Launching an Activity
 
-When working with push messages, often the notification will launch an activity or the activity may even be launched by the broadcast receiver directly. In these cases, we might want to ensure that the activity launched is the same activity that is already running rather a new instance. To achieve this, we can use [launch modes or intent flags](http://guides.codepath.com/android/Navigation-and-Task-Stacks#launch-modes) such as `singleTop` to ensure the same activity instance is presented.
+When working with push messages, often the notification will launch an activity or the activity may even be launched by the broadcast receiver directly. In these cases, we might want to ensure that the activity launched is the same activity that is already running rather a new instance. To achieve this, we can use [[launch modes or intent flags|Navigation-and-Task-Stacks#launch-modes]] such as `singleTop` to ensure the same activity instance is presented.
+
+##### Checking App State when Receiving a Broadcast
+
+In certain cases when receiving a push, you want to **update an activity only if the activity is on the screen**. Otherwise, if the activity is not on screen then you want to [[create a notification|Notifications]]. 
+
+There are two approaches to this: either use `ActivityManager` to check if the activity is running or use ordered broadcasts to override the receiver when the activity is running. Both possible solutions to this are [outlined in this post](http://stackoverflow.com/a/18311830/313399) with a [code sample here](http://stackoverflow.com/a/15949723/313399).
 
 ### Source Code
 
@@ -110,33 +114,9 @@ A few quick things to help make implementing push notifications easier:
 
 ## Google Cloud Messaging
 
-Second approach is the more manual one using GCM. Google Cloud Messaging for Android (GCM) is a service that allows you to send data from your server to your users' Android-powered device, and also to receive messages from devices on the same connection. 
+Second approach is the more manual way using GCM. Google Cloud Messaging for Android (GCM) is a service that allows you to send data from your server to your users' Android-powered device and also to receive messages from devices on the same connection.  Beneath the surface, Parse implements push notifications for Android with GCM.
 
-A GCM implementation includes a Google-provided connection server, a 3rd-party app server that interacts with the connection server, and a GCM-enabled client app running on an Android device:
-
-![GCM Arch](https://i.imgur.com/9XzwPqc.png)
-
-In order to use GCM, we need to go through the following steps:
-
- 1. Register with Google Console and enable GCM
-    - Obtain Sender ID (Project Number)
-    - Obtain Server API Key
- 2. Integrate GCM into our Android app
-    - Register in app for a GCM Registration ID
-    - Transmit the Registration ID (Device ID) to our web server
-    - Register a GCM Receiver to handle incoming messages
- 3. Develop HTTP Server with GCM endpoints
-    - Endpoint for registering a user with a device ID
-    - Endpoint for sending a push notification to a specified set of device IDs
-
-Read our [[Google Cloud Messaging]] cliffnotes for specific implementation details. Check out these external links below for reference:
-
- * [Google GCM Overview](http://developer.android.com/google/gcm/gs.html)
-    * [Implementing GCM Server](http://developer.android.com/google/gcm/server.html)
- * [AndroidHive GCM Tutorial](http://www.androidhive.info/2012/10/android-push-notifications-using-google-cloud-messaging-gcm-php-and-mysql/)
- * <https://developers.google.com/cloud/samples/mbs/android/enable_push>
- * <http://javapapers.com/android/google-cloud-messaging-gcm-for-android-and-push-notifications/>
- * <http://hmkcode.com/android-google-cloud-messaging-tutorial/>
+Read our [[Google Cloud Messaging]] guide for specific implementation details. 
 
 ## References
 

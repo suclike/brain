@@ -54,8 +54,6 @@ Set minSdkVersion to Lolipop for your debug builds
 What if you could avoid while you are debugging the steps that are not required when your device runs lollipop or newer?
 The Android Build system allows you to do that by defining two flavorDimensions :
 
-- `:Adviqo:assembleInternLollipopAlpha`
-- `:Adviqo:assembleStoreSupportDebug`
 
  
 Here is an example
@@ -87,6 +85,11 @@ android {
     }
 }
 ```
+
+You will then have as gradle tasks something like:
+
+- `:app:assembleInternLollipopAlpha`
+- `:app:assembleStoreSupportDebug`
  
 This allowed me to decrease my build time from 40s to 10s (smile)
 
@@ -102,11 +105,8 @@ Using an emulator makes testing with different SDK version much simpler
  
 It will spare you the time to install the .apk via usb, unpackage it and install it.
 
-We used to have one good choice, we will hopefully have a second one soon
+I have myself a good experience with *Genymotion*
 
- 
-Genymotion
------
 
 ```
 # Install brew at http://brew.sh/ http://caskroom.io/
@@ -120,9 +120,15 @@ Create a device, for example Nexus 5
 Start it
 
 
-Google
--------
+Android Studio 2: Instant Run and Android Emulator
+=====
 
-Google also released an emulation in Android Studio 2 beta
+Last but not least, those new important features are coming by Google itself, proving that things have definitely moved in the right direction in 2015.
 
-http://android-developers.blogspot.de/2015/12/android-studio-20-preview-android.html
+In fact already available for testing,
+
+I have not yet experience with them myselves, but here are the links to get you started, and if you have feedback to add,  in the comments, that will be very appreciated
+
+- http://tools.android.com/tech-docs/instant-run
+- http://android-developers.blogspot.de/2015/11/android-studio-20-preview.html
+- http://android-developers.blogspot.com/2015/12/android-studio-20-preview-android.html

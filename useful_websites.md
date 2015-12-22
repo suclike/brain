@@ -8,24 +8,28 @@ Langauges
 =======
 
 - http://www.fluentin3months.com/start-here/ Benny Lewis, Language Hacker
+- http://www.fluentin3months.com/reasons/ All the reasons why are not learning a language while you would like to - and wether they are valid
 - https://www.duolingo.com/ makes language learning a daily habit
 - http://lyricstraining.com/ Best effectivness-over-fun ratio
 - http://www.fluentu.com/ if you are afraid of songs
 - http://www.italki.com/notebook/mine/notebooks?page=1 Write in you rtarget language, get corrected
 - http://www.italki.com/teachers/tutoring 1-to-1 Language Lessoons 
--.https://rhinospike.com/ Foreign Language Audio on Demand!
+- https://rhinospike.com/ Foreign Language Audio on Demand!
 - http://forvo.com/ all the words of the world, pronounced
 - http://add1challenge.com/ Hold a 15 min Conversation With a Native Speaker In 90 Days
+- Books for children (avoid most language learning books - did you learn your mother tongue with one of them?)
+- http://www.omniglot.com/language/phrases/langs.htm - Useful foreign phrases suitable on a lot occasion in a lot of languages
+- http://www.audio-lingua.eu/ http://languagepod101.com/ or really any podcast on a subject that interest you
+- http://www.ted.com/talks Get inspired & practice your language
 - https://www.facebook.com/groups/poliglotas/?fref=ts Polyglots united
 - https://www.chatterplot.com/ a mix of language partner search + meetup with locals
 - http://www.meetup.com - do not limit yourself to "language-learning" meetups, do what is fun for you
-- http://www.audio-lingua.eu/ http://languagepod101.com/ or really any podcast on a subject that interest you
-- http://www.ted.com/talks Get inspired & practice your language
 - http://www.wordreference.com/ - my favorite dictionnary
 - http://spellcheckplus.com/ - online spellchecker
 - https://languagetool.org/ Open Source proof­reading program for English, French, German, Polish, and more than 20 other languages.
 - http://bonpatron.com/ Correcteur grammatical francais
 - http://www.hemingwayapp.com/ makes your writing bold and clear.
+
 
 
 Tech & Entrepreneurship

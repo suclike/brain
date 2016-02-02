@@ -1,3 +1,52 @@
+== Gens ==
+
+adulto età bambino fidanzata folla amica gruppo ospita umani vicini gente persona adolescente carattere cittadini generazione individuo personalità sposa rapporti compagno signore giovani simpatico
+
+https://www.duolingo.com/skill/it/People
+
+== Adjectifs ==
+
+nuova vecchia stesso diverse possibile impossibile bella buona buon bravo alta basso internazionale nazionale stranieri caro economico gratuito liberi ricca famosa popolare importante utile moderni quotidiano chiusa interessanta unico speciale perfetto capace forte strano pesante pericoloso grosso sola difficile duro intero lunga corte pieno prossimo facile sicuro comune normale vero giusta certe pronti giovane chiara calda fredda breve
+
+https://www.duolingo.com/skill/it/Adjectives-1
+
+== Famille ==
+
+famiglia madre padre fratelli sorella genitori figlia marito moglie zia cugini nipote nonna nome cognome papà mamma
+
+https://www.duolingo.com/skill/it/Family
+
+== Infinitifs 1 ==
+
+essere avere fare venire stare andare dire conoscere sapere vedere trovare pensare parlare mettere piacere prendere portare arrivare chiedere credere lasciare sentire tenere diventare capire rimanere passere entrare vivere ricordare usare chiamare morire guardare aprire seguire aspettare decidere scrivere finire leggere unire cambiare offrire giocare suonare perdere costruire rispondere indicare succedere chiudere aiutare amare scegliere aggiungere mancare ricevere guidare dimostrare mangiare correre tirare
+
+https://www.duolingo.com/skill/it/Verbs%3A-Infinitive-1
+
+== Maison ==
+
+appartamento balcone bagno vasca letto coperta tappeto sedia limpida sofà tenda scrivania porta pavimento frigorifero mobili cancelli riscaldamento casa chiave lampada luce specchi telefono cuscini tetto stanza sciampo doccia sapone divano scala tavolo asciugamani giocattolo muro finestra cortile cucina entrata forno tavola seggiola dentrificio lenzuola rasoio spazzolinof
+
+https://www.duolingo.com/skill/it/Household
+
+== Verbes Present II ==
+
+https://www.duolingo.com/skill/it/Verbs%3A-Present-2
+
+leggono unite cambia offriamo giocano perde proviamo costruiamo rispondi indica succede chiudi aiuta ama scegli aggiunge manca riceve guidiamo dimostra significa incontra pagano crescono spiga cadono colpisci ascoltano ferma studia controllo manda corro gira ritorna invita dimentichiamo vendo descrivi salviamo scusate attraversano impariamo preferisci basta dura cerco 
+
+
+== Adjectifs ==
+
+nuova vecchia stesso diverse possibile impossibile bella buona buon bravo alta basso internazionale nazionale stranieri caro economico gratuito libera ricca famosa popolare importante utile moderna quotidiano chiusa interessante interessata unico speciale perfetti capace forti strano pesante pericoloso grosso sola difficile duro intero lunga corte pieno prossimi facile sicuro commune normale vero giusta certe pronti giovane chiara calda fredda breve
+
+https://www.duolingo.com/skill/it/Adjectives-1
+
+== Couleurs ==
+
+nero azzure marrone colorata colore grigia verde arancione rosa viola rossa bianche gialli azzurri bianco
+
+https://www.duolingo.com/skill/it/Colors
+
 == Nombres ==
 prima secondo terzo quarto quinta sesto settima ottavo nono decima ultimo 
 alcuni doppio molte pochi sufficiente tanta abbastanza meno metà più
